@@ -1,0 +1,308 @@
+'use client';
+
+import { useState, useEffect } from "react";
+import { useCart } from "@/context/CartContext";
+import { useVariation } from "./VariationProvider";
+
+interface AttributeNode {
+  name: string;
+  label: string | null;
+  options: string[];
+  variation: boolean;
+  visible: boolean;
+  terms?: {
+    nodes: {
+      name: string;
+      slug: string;
+    }[];
+  } | null;
+}
+
+interface VariationNode {
+  id: string;
+  databaseId: number;
+  name: string;
+  price: string | null;
+  regularPrice: string | null;
+  stockStatus?: string | null;
+  image?: {
+    sourceUrl: string;
+    altText?: string;
+  } | null;
+  attributes?: {
+    nodes: {
+      name: string;
+      value: string;
+    }[];
+  } | null;
+}
+
+interface AddToCartFormProps {
+  productId: number;
+  attributes: AttributeNode[] | null;
+  variations: VariationNode[] | null;
+  stockStatus?: string | null;
+}
+
+// Helper to safely URL-decode values (avoiding URIError)
+function safeDecode(str: string): string {
+  if (!str) return "";
+  try {
+    return decodeURIComponent(str);
+  } catch (e) {
+    return str;
+  }
+}
+
+// Helper to clean up WordPress slug corruption on attributes (e.g., cf%89-0-8 or cf-0-8 -> 0.8)
+function cleanAttributeLabel(val: string): string {
+  if (!val) return "";
+  let decoded = safeDecode(val);
+  
+  let clean = decoded
+    .replace(/cf%89-/gi, "")
+    .replace(/cf\u0089-/gi, "")
+    .replace(/cf\x89-/gi, "")
+    .replace(/cf-/gi, "")
+    .replace(/omega-/gi, "")
+    .replace(/ohm-/gi, "");
+    
+  clean = clean.replace(/(\d+)-(\d+)/g, "$1.$2");
+  return clean;
+}
+
+export default function AddToCartForm({ productId, attributes, variations, stockStatus }: AddToCartFormProps) {
+  const { addToCart } = useCart();
+  const { setSelectedVariationImage } = useVariation();
+  const [quantity, setQuantity] = useState(1);
+  const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
+  const [isAdding, setIsAdding] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [flyingElement, setFlyingElement] = useState<{ startX: number, startY: number, destX: number, destY: number, isFlying: boolean } | null>(null);
+
+  const handleQuantityChange = (val: number) => {
+    if (val < 1) return;
+    setQuantity(val);
+  };
+
+  const handleSelectAttribute = (attrName: string, option: string) => {
+    setSelectedAttributes(prev => ({
+      ...prev,
+      [attrName]: option
+    }));
+  };
+
+  const variationAttributes = attributes ? attributes.filter(attr => attr.variation) : [];
+  const hasAttributes = variationAttributes.length > 0;
+  const isVariable = attributes ? attributes.some(attr => attr.variation) : false;
+  const isOutOfStock = stockStatus === "OUT_OF_STOCK" || stockStatus === "OUTOFSTOCK";
+  const variationsIncomplete = isVariable && (!variations || variations.length === 0);
+
+  // Find variation matching selected attributes map
+  const findMatchingVariation = () => {
+    if (!variations || !hasAttributes || variationsIncomplete) return null;
+    
+    const selectedKeys = Object.keys(selectedAttributes);
+    if (selectedKeys.length !== variationAttributes.length) return null;
+
+    return variations.find(variation => {
+      const varAttrs = variation.attributes?.nodes || [];
+      return varAttrs.every(attr => {
+        const selectedVal = selectedAttributes[attr.name];
+        return safeDecode(selectedVal) === safeDecode(attr.value);
+      });
+    }) || null;
+  };
+
+  const matchingVariation = isVariable ? findMatchingVariation() : null;
+
+  // Update the globally displayed image when a matching variation is selected
+  useEffect(() => {
+    if (matchingVariation && matchingVariation.image) {
+      setSelectedVariationImage(matchingVariation.image);
+    } else {
+      setSelectedVariationImage(null);
+    }
+  }, [matchingVariation, setSelectedVariationImage]);
+
+  const isVariationOutOfStock = matchingVariation
+    ? (matchingVariation.stockStatus === "OUT_OF_STOCK" || matchingVariation.stockStatus === "OUTOFSTOCK")
+    : false;
+
+  const canAddToCart = !isOutOfStock && !variationsIncomplete && (!isVariable || (!!matchingVariation && !isVariationOutOfStock));
+
+  const handleAdd = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!canAddToCart || isAdding) return;
+    setIsAdding(true);
+    setSuccess(false);
+
+    const variationId = matchingVariation ? matchingVariation.databaseId : undefined;
+    const isAdded = await addToCart(productId, quantity, variationId);
+
+    setIsAdding(false);
+    if (isAdded) {
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 2000);
+
+      // Fly-to-Cart animation trigger for mobile devices
+      const target = document.getElementById("mobile-cart-target");
+      if (target) {
+        const rect = target.getBoundingClientRect();
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const destX = rect.left + rect.width / 2;
+        const destY = rect.top + rect.height / 2;
+
+        setFlyingElement({
+          startX,
+          startY,
+          destX,
+          destY,
+          isFlying: false
+        });
+
+        // Trigger transition after a tiny delay so the browser registers the initial non-transitioned state
+        setTimeout(() => {
+          setFlyingElement(prev => prev ? { ...prev, isFlying: true } : null);
+        }, 50);
+
+        // Clear flying state and trigger badge bump animation once fly finishes
+        setTimeout(() => {
+          setFlyingElement(null);
+          const badge = document.getElementById("mobile-cart-badge");
+          if (badge) {
+            badge.classList.remove("bump-anim"); // Reset if animation class is already present
+            void badge.offsetWidth; // Force reflow to restart animation on consecutive clicks
+            badge.classList.add("bump-anim");
+            setTimeout(() => {
+              badge.classList.remove("bump-anim");
+            }, 400);
+          }
+        }, 850);
+      }
+    }
+  };
+
+  // Determine button label text
+  let btnText = "أضف إلى السلة";
+  if (isAdding) {
+    btnText = "جاري الإضافة...";
+  } else if (success) {
+    btnText = "تمت الإضافة بنجاح!";
+  } else if (isOutOfStock) {
+    btnText = "نفدت الكمية";
+  } else if (variationsIncomplete) {
+    btnText = "غير متوفر: خيارات غير مكتملة";
+  } else if (isVariable && !matchingVariation) {
+    const selectedCount = Object.keys(selectedAttributes).length;
+    btnText = selectedCount === 0 ? "اختر الخيارات للمتابعة" : "أكمل بقية الخيارات";
+  } else if (isVariable && isVariationOutOfStock) {
+    btnText = "نفدت الكمية (هذا الخيار غير متوفر)";
+  }
+
+  return (
+    <div className="add-to-cart-form-container">
+      {/* Attribute/Variation Selectors */}
+      {hasAttributes && (
+        <div className="product-attributes">
+          {variationAttributes.map((attr) => {
+            const attrLabel = attr.label || attr.name.replace("pa_", "");
+            const selectedOption = selectedAttributes[attr.name];
+
+            return (
+              <div key={attr.name} className="product-attribute">
+                <span className="product-attribute-label">{attrLabel}:</span>
+                <div className="product-attribute-options">
+                  {attr.options.map((option) => {
+                    const isActive = selectedOption === option;
+                    const matchedTerm = attr.terms?.nodes?.find(
+                      (t) => safeDecode(t.slug) === safeDecode(option)
+                    );
+                    const displayName = matchedTerm ? matchedTerm.name : cleanAttributeLabel(option);
+
+                    return (
+                      <button
+                        key={option}
+                        type="button"
+                        className={`product-attribute-option ${isActive ? "active" : ""}`}
+                        onClick={() => handleSelectAttribute(attr.name, option)}
+                      >
+                        {displayName}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Quantity Selector and Add to Cart Button */}
+      <div className="product-cart-ui">
+        <div className="quantity-selector">
+          <button
+            type="button"
+            className="quantity-btn decrement"
+            onClick={() => handleQuantityChange(quantity - 1)}
+            aria-label="تقليل الكمية"
+            disabled={isAdding}
+          >
+            −
+          </button>
+          <input
+            type="number"
+            className="quantity-val"
+            value={quantity}
+            onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
+            min="1"
+            aria-label="الكمية"
+            disabled={isAdding}
+          />
+          <button
+            type="button"
+            className="quantity-btn increment"
+            onClick={() => handleQuantityChange(quantity + 1)}
+            aria-label="زيادة الكمية"
+            disabled={isAdding}
+          >
+            +
+          </button>
+        </div>
+
+        <button
+          type="button"
+          className={`add-to-cart-btn ${success ? "success-state" : ""} ${!canAddToCart ? "disabled-state" : ""}`}
+          onClick={(e) => handleAdd(e)}
+          disabled={!canAddToCart || isAdding}
+        >
+          {success ? (
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17 18c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zM7 18c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm1.71-1.74l.03-.12h9.11c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.37-.66-.11-1.48-.87-1.48H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h12v-2H7l1.1-2z"/>
+            </svg>
+          )}
+          {btnText}
+        </button>
+      </div>
+
+      {/* Fly-to-Cart Animation Element */}
+      {flyingElement && (
+        <div
+          className="flying-cart-item"
+          style={{
+            left: flyingElement.startX - 12,
+            top: flyingElement.startY - 12,
+            transform: flyingElement.isFlying
+              ? `translate(${flyingElement.destX - flyingElement.startX}px, ${flyingElement.destY - flyingElement.startY}px) scale(0.2)`
+              : "none",
+            opacity: flyingElement.isFlying ? 0 : 1,
+          }}
+        />
+      )}
+    </div>
+  );
+}
