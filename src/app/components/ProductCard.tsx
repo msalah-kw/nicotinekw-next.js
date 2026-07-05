@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
@@ -57,9 +57,9 @@ function cleanAttributeLabel(val: string): string {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
+  const [isPending, startTransition] = useTransition();
   
   // Card states
-  const [adding, setAdding] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
   const [fullProduct, setFullProduct] = useState<WooProduct | null>(null);
@@ -67,7 +67,6 @@ export default function ProductCard({ product }: ProductCardProps) {
   // Modal choice states
   const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
   const [quantity, setQuantity] = useState(1);
-  const [modalAdding, setModalAdding] = useState(false);
   const [modalError, setModalError] = useState<string | null>(null);
 
   // Portal mounted state
@@ -84,7 +83,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const cleanCategoryName = categoryName ? sanitizeTerminology(categoryName) : "";
 
   // Dynamic Add to Cart Handler
-  const handleAddToCart = async (e: React.MouseEvent) => {
+  const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -94,38 +93,38 @@ export default function ProductCard({ product }: ProductCardProps) {
         setModalLoading(true);
         setModalError(null);
         try {
-          const { data } = await fetchGraphQL(GET_PRODUCT_BY_SLUG_QUERY, { id: product.slug });
-          if (data?.product) {
-            setFullProduct(data.product);
-            // Pre-select first options if any (only for variation attributes)
-            const initialAttrs: Record<string, string> = {};
-            const variationAttrs = data.product.attributes?.nodes?.filter((attr: { variation: boolean }) => attr.variation) || [];
-            variationAttrs.forEach((attr: { name: string; options: string[] }) => {
-              if (attr.options && attr.options.length > 0) {
-                initialAttrs[attr.name] = attr.options[0];
-              }
-            });
-            setSelectedAttributes(initialAttrs);
-          } else {
-            setModalError("حدث خطأ أثناء تحميل بيانات المنتج.");
-          }
+          fetchGraphQL(GET_PRODUCT_BY_SLUG_QUERY, { id: product.slug }).then(({ data }) => {
+            if (data?.product) {
+              setFullProduct(data.product);
+              // Pre-select first options if any (only for variation attributes)
+              const initialAttrs: Record<string, string> = {};
+              const variationAttrs = data.product.attributes?.nodes?.filter((attr: { variation: boolean }) => attr.variation) || [];
+              variationAttrs.forEach((attr: { name: string; options: string[] }) => {
+                if (attr.options && attr.options.length > 0) {
+                  initialAttrs[attr.name] = attr.options[0];
+                }
+              });
+              setSelectedAttributes(initialAttrs);
+            } else {
+              setModalError("حدث خطأ أثناء تحميل بيانات المنتج.");
+            }
+            setModalLoading(false);
+          });
         } catch (error) {
           console.error("Error loading product variations:", error);
           setModalError("فشل الاتصال بالخادم. الرجاء المحاولة مرة أخرى.");
-        } finally {
           setModalLoading(false);
         }
       }
     } else {
       // Simple Product
-      setAdding(true);
-      try {
-        await addToCart(product.databaseId, 1);
-      } catch (error) {
-        console.error("Error adding simple product to cart:", error);
-      } finally {
-        setAdding(false);
-      }
+      startTransition(async () => {
+        try {
+          await addToCart(product.databaseId, 1);
+        } catch (error) {
+          console.error("Error adding simple product to cart:", error);
+        }
+      });
     }
   };
 
@@ -166,27 +165,26 @@ export default function ProductCard({ product }: ProductCardProps) {
   const canAddToCart = !isOutOfStock && !variationsIncomplete && (!isVariable || (fullProduct && !!matchingVariation && !isVariationOutOfStock));
 
   // Add Variation inside Modal
-  const handleModalAdd = async () => {
-    if (!canAddToCart || modalAdding || !fullProduct) return;
-    setModalAdding(true);
+  const handleModalAdd = () => {
+    if (!canAddToCart || isPending || !fullProduct) return;
     setModalError(null);
 
     const variationId = matchingVariation ? matchingVariation.databaseId : undefined;
-    try {
-      const success = await addToCart(product.databaseId, quantity, variationId);
-      if (success) {
-        setShowModal(false);
-        // Reset selections
-        setQuantity(1);
-      } else {
-        setModalError("حدث خطأ أثناء إضافة المنتج إلى السلة.");
+    startTransition(async () => {
+      try {
+        const success = await addToCart(product.databaseId, quantity, variationId);
+        if (success) {
+          setShowModal(false);
+          // Reset selections
+          setQuantity(1);
+        } else {
+          setModalError("حدث خطأ أثناء إضافة المنتج إلى السلة.");
+        }
+      } catch (error) {
+        console.error("Error adding product to cart inside modal:", error);
+        setModalError("حدث خطأ غير متوقع.");
       }
-    } catch (error) {
-      console.error("Error adding product to cart inside modal:", error);
-      setModalError("حدث خطأ غير متوقع.");
-    } finally {
-      setModalAdding(false);
-    }
+    });
   };
 
   // Determine display price inside modal
@@ -245,9 +243,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         <button
           onClick={handleAddToCart}
           className="product-card-add-to-cart-btn"
-          disabled={adding}
+          disabled={isPending}
         >
-          {adding ? (
+          {isPending ? (
             <>
               <span className="spinner-mini"></span>
               جاري الإضافة...
@@ -376,7 +374,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                           e.stopPropagation();
                           setQuantity(prev => Math.max(1, prev - 1));
                         }}
-                        disabled={modalAdding}
+                        disabled={isPending}
                       >
                         −
                       </button>
@@ -389,7 +387,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                           e.stopPropagation();
                         }}
                         min="1"
-                        disabled={modalAdding}
+                        disabled={isPending}
                         aria-label="الكمية"
                       />
                       <button
@@ -400,7 +398,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                           e.stopPropagation();
                           setQuantity(prev => prev + 1);
                         }}
-                        disabled={modalAdding}
+                        disabled={isPending}
                       >
                         +
                       </button>
@@ -414,9 +412,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                         e.stopPropagation();
                         handleModalAdd();
                       }}
-                      disabled={!canAddToCart || modalAdding}
+                      disabled={!canAddToCart || isPending}
                     >
-                      {modalAdding
+                      {isPending
                         ? "جاري الإضافة..."
                         : isOutOfStock
                         ? "نفدت الكمية"

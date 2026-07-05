@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies, headers } from "next/headers";
+import { revalidateTag } from "next/cache";
 import {
   fetchGraphQL,
   GET_CART_QUERY,
@@ -163,7 +164,8 @@ export async function getCartAction(sessionToken?: string) {
     const { data, sessionToken: newSessionToken } = await fetchGraphQL(
       GET_CART_QUERY,
       {},
-      sessionToken
+      sessionToken,
+      { cache: "no-store", tags: ["cart"] }
     );
     return {
       success: true,
@@ -178,7 +180,8 @@ export async function getCartAction(sessionToken?: string) {
         const { data, sessionToken: newSessionToken } = await fetchGraphQL(
           GET_CART_QUERY,
           {},
-          undefined
+          undefined,
+          { cache: "no-store", tags: ["cart"] }
         );
         return {
           success: true,
@@ -222,6 +225,8 @@ export async function addToCartAction(
     // After adding to cart, let's fetch the updated cart automatically
     const updatedCart = await getCartAction(newSessionToken || sessionToken);
     
+    revalidateTag("cart", { expire: 0 });
+    
     return {
       success: true,
       cartItem: data?.addToCart?.cartItem || null,
@@ -241,6 +246,8 @@ export async function addToCartAction(
         
         // Fetch cart using the new guest token
         const updatedCart = await getCartAction(newSessionToken || undefined);
+        
+        revalidateTag("cart", { expire: 0 });
         
         return {
           success: true,
@@ -283,6 +290,8 @@ export async function updateCartQuantityAction(
     
     const updatedCart = await getCartAction(newSessionToken || sessionToken);
     
+    revalidateTag("cart", { expire: 0 });
+    
     return {
       success: true,
       cart: updatedCart.cart,
@@ -321,6 +330,8 @@ export async function removeFromCartAction(
     );
     
     const updatedCart = await getCartAction(newSessionToken || sessionToken);
+    
+    revalidateTag("cart", { expire: 0 });
     
     return {
       success: true,
@@ -409,6 +420,8 @@ export async function checkoutAction(
       sessionToken
     );
 
+    revalidateTag("cart", { expire: 0 });
+
     return {
       success: true,
       order: data?.checkout?.order || null,
@@ -419,6 +432,7 @@ export async function checkoutAction(
     if (error.message === "TOKEN_EXPIRED") {
       console.warn("checkoutAction: Token expired. Clearing session...");
       await clearSessionCookies();
+      revalidateTag("cart", { expire: 0 });
       return {
         success: false,
         error: "expired_session",

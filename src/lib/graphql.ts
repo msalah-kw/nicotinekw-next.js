@@ -37,9 +37,11 @@ export async function fetchGraphQL(
       ...(options.revalidate !== undefined ? { revalidate: options.revalidate } : {}),
       ...(options.tags !== undefined ? { tags: options.tags } : {}),
     };
-  } else if (options?.cache) {
+  }
+
+  if (options?.cache) {
     fetchOptions.cache = options.cache;
-  } else {
+  } else if (options?.revalidate === undefined) {
     fetchOptions.cache = "no-store";
   }
 

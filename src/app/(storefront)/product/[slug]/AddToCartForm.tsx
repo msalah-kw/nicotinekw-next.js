@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { useCart } from "@/context/CartContext";
 import { useVariation } from "./VariationProvider";
 
@@ -76,7 +76,7 @@ export default function AddToCartForm({ productId, attributes, variations, stock
   const { setSelectedVariationImage } = useVariation();
   const [quantity, setQuantity] = useState(1);
   const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
-  const [isAdding, setIsAdding] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState(false);
   const [flyingElement, setFlyingElement] = useState<{ startX: number, startY: number, destX: number, destY: number, isFlying: boolean } | null>(null);
 
@@ -131,61 +131,62 @@ export default function AddToCartForm({ productId, attributes, variations, stock
 
   const canAddToCart = !isOutOfStock && !variationsIncomplete && (!isVariable || (!!matchingVariation && !isVariationOutOfStock));
 
-  const handleAdd = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (!canAddToCart || isAdding) return;
-    setIsAdding(true);
+  const handleAdd = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!canAddToCart || isPending) return;
     setSuccess(false);
 
     const variationId = matchingVariation ? matchingVariation.databaseId : undefined;
-    const isAdded = await addToCart(productId, quantity, variationId);
+    
+    startTransition(async () => {
+      const isAdded = await addToCart(productId, quantity, variationId);
 
-    setIsAdding(false);
-    if (isAdded) {
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 2000);
+      if (isAdded) {
+        setSuccess(true);
+        setTimeout(() => setSuccess(false), 2000);
 
-      // Fly-to-Cart animation trigger for mobile devices
-      const target = document.getElementById("mobile-cart-target");
-      if (target) {
-        const rect = target.getBoundingClientRect();
-        const startX = e.clientX;
-        const startY = e.clientY;
-        const destX = rect.left + rect.width / 2;
-        const destY = rect.top + rect.height / 2;
+        // Fly-to-Cart animation trigger for mobile devices
+        const target = document.getElementById("mobile-cart-target");
+        if (target) {
+          const rect = target.getBoundingClientRect();
+          const startX = e.clientX;
+          const startY = e.clientY;
+          const destX = rect.left + rect.width / 2;
+          const destY = rect.top + rect.height / 2;
 
-        setFlyingElement({
-          startX,
-          startY,
-          destX,
-          destY,
-          isFlying: false
-        });
+          setFlyingElement({
+            startX,
+            startY,
+            destX,
+            destY,
+            isFlying: false
+          });
 
-        // Trigger transition after a tiny delay so the browser registers the initial non-transitioned state
-        setTimeout(() => {
-          setFlyingElement(prev => prev ? { ...prev, isFlying: true } : null);
-        }, 50);
+          // Trigger transition after a tiny delay so the browser registers the initial non-transitioned state
+          setTimeout(() => {
+            setFlyingElement(prev => prev ? { ...prev, isFlying: true } : null);
+          }, 50);
 
-        // Clear flying state and trigger badge bump animation once fly finishes
-        setTimeout(() => {
-          setFlyingElement(null);
-          const badge = document.getElementById("mobile-cart-badge");
-          if (badge) {
-            badge.classList.remove("bump-anim"); // Reset if animation class is already present
-            void badge.offsetWidth; // Force reflow to restart animation on consecutive clicks
-            badge.classList.add("bump-anim");
-            setTimeout(() => {
-              badge.classList.remove("bump-anim");
-            }, 400);
-          }
-        }, 850);
+          // Clear flying state and trigger badge bump animation once fly finishes
+          setTimeout(() => {
+            setFlyingElement(null);
+            const badge = document.getElementById("mobile-cart-badge");
+            if (badge) {
+              badge.classList.remove("bump-anim"); // Reset if animation class is already present
+              void badge.offsetWidth; // Force reflow to restart animation on consecutive clicks
+              badge.classList.add("bump-anim");
+              setTimeout(() => {
+                badge.classList.remove("bump-anim");
+              }, 400);
+            }
+          }, 850);
+        }
       }
-    }
+    });
   };
 
   // Determine button label text
   let btnText = "أضف إلى السلة";
-  if (isAdding) {
+  if (isPending) {
     btnText = "جاري الإضافة...";
   } else if (success) {
     btnText = "تمت الإضافة بنجاح!";
@@ -246,7 +247,7 @@ export default function AddToCartForm({ productId, attributes, variations, stock
             className="quantity-btn decrement"
             onClick={() => handleQuantityChange(quantity - 1)}
             aria-label="تقليل الكمية"
-            disabled={isAdding}
+            disabled={isPending}
           >
             −
           </button>
@@ -257,14 +258,14 @@ export default function AddToCartForm({ productId, attributes, variations, stock
             onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
             min="1"
             aria-label="الكمية"
-            disabled={isAdding}
+            disabled={isPending}
           />
           <button
             type="button"
             className="quantity-btn increment"
             onClick={() => handleQuantityChange(quantity + 1)}
             aria-label="زيادة الكمية"
-            disabled={isAdding}
+            disabled={isPending}
           >
             +
           </button>
@@ -274,7 +275,7 @@ export default function AddToCartForm({ productId, attributes, variations, stock
           type="button"
           className={`add-to-cart-btn ${success ? "success-state" : ""} ${!canAddToCart ? "disabled-state" : ""}`}
           onClick={(e) => handleAdd(e)}
-          disabled={!canAddToCart || isAdding}
+          disabled={!canAddToCart || isPending}
         >
           {success ? (
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
