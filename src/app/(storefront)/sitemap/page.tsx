@@ -5,7 +5,7 @@ import { fetchGraphQL, GET_CATEGORIES_QUERY } from "@/lib/graphql";
 export const revalidate = 3600; // Cache sitemap for 1 hour
 
 export async function generateMetadata(): Promise<Metadata> {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sahbavape.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mediumpurple-tarsier-577339.hostingersite.com";
   return {
     title: "خريطة الموقع | دليل المتجر",
     description: "دليل شامل لجميع أقسام وتصنيفات المتجر لتسهيل تصفح منتجاتنا.",

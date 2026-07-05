@@ -37,7 +37,7 @@ To mask backend infrastructure and maintain optimal search engine indexing autho
 1. **Infrastructure Masking:**
    - The `poweredByHeader` property must be set to `false` in `next.config.mjs` to suppress the `X-Powered-By: Next.js` header.
 2. **Domain Consolidation (Canonicalization):**
-   - Direct all traffic to the root apex domain by enforcing a permanent (301) redirect from the `www` subdomain (e.g., `www.sahbavape.com`) to the apex domain (`https://sahbavape.com`) inside `next.config.mjs`.
+   - Direct all traffic to the root apex domain by enforcing a permanent (301) redirect from the `www` subdomain (e.g., `www.mediumpurple-tarsier-577339.hostingersite.com`) to the apex domain (`https://mediumpurple-tarsier-577339.hostingersite.com`) inside `next.config.mjs`.
 
 ---
 

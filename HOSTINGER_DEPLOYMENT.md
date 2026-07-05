@@ -74,8 +74,8 @@
 #### الخطوة 3: تهيئة متغيرات البيئة وتشغيل التطبيق
 1. في لوحة تحكم Node.js على Hostinger، انتقل إلى قسم **Environment Variables** (متغيرات البيئة).
 2. أضف المتغيرات التالية وقيمها:
-   - `WORDPRESS_API_URL` = `https://lightgrey-flamingo-522119.hostingersite.com/graphql`
-   - `NEXT_PUBLIC_SITE_URL` = `https://sahbavape.com`
+   - `WORDPRESS_API_URL` = `https://aliceblue-gnu-460662.hostingersite.com/graphql`
+   - `NEXT_PUBLIC_SITE_URL` = `https://mediumpurple-tarsier-577339.hostingersite.com`
 3. في لوحة التحكم، انقر على زر **Install npm dependencies** (لتثبيت التبعيات الخفيفة إن وُجدت).
 4. انقر على **Start Application** (أو **Restart Application** إذا كان يعمل مسبقاً).
 
@@ -121,8 +121,8 @@
    ```
 2. الصق القيم التالية في الملف ثم احفظ واغلق بالضغط على (`Ctrl+O` ثم `Enter` ثم `Ctrl+X`):
    ```env
-   WORDPRESS_API_URL=https://lightgrey-flamingo-522119.hostingersite.com/graphql
-   NEXT_PUBLIC_SITE_URL=https://sahbavape.com
+   WORDPRESS_API_URL=https://aliceblue-gnu-460662.hostingersite.com/graphql
+   NEXT_PUBLIC_SITE_URL=https://mediumpurple-tarsier-577339.hostingersite.com
    ```
 3. قم بتثبيت المكتبات وبناء التطبيق:
    ```bash
@@ -159,7 +159,7 @@ pm2 startup
    ```nginx
    server {
        listen 80;
-       server_name sahbavape.com www.sahbavape.com;
+       server_name mediumpurple-tarsier-577339.hostingersite.com www.mediumpurple-tarsier-577339.hostingersite.com;
 
        location / {
            proxy_pass http://localhost:3000;
@@ -179,7 +179,7 @@ pm2 startup
 5. (اختياري ولكنه هام جداً): تفعيل شهادة SSL مجانية لحماية الموقع باستخدام Certbot:
    ```bash
    sudo apt install certbot python3-certbot-nginx -y
-   sudo certbot --nginx -d sahbavape.com -d www.sahbavape.com
+   sudo certbot --nginx -d mediumpurple-tarsier-577339.hostingersite.com -d www.mediumpurple-tarsier-577339.hostingersite.com
    ```
 
 ---

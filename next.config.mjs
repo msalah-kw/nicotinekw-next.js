@@ -53,11 +53,11 @@ const nextConfig = {
           {
             type: 'host',
             // BRANDING_TODO: Replace value with the www version of your brand domain.
-            value: 'www.sahbavape.com',
+            value: 'www.mediumpurple-tarsier-577339.hostingersite.com',
           },
         ],
         // BRANDING_TODO: Replace destination with your primary canonical apex domain.
-        destination: 'https://sahbavape.com/:path*',
+        destination: 'https://mediumpurple-tarsier-577339.hostingersite.com/:path*',
         permanent: true,
       },
     ];

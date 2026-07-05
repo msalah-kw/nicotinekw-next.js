@@ -8,7 +8,7 @@ import {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // BRANDING_TODO: Replace fallback domain URL with your primary production site domain.
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sahbavape.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mediumpurple-tarsier-577339.hostingersite.com";
 
   // Fetch all product, category, and WP page slugs in parallel (Arabic = primary locale for SEO)
   // Wrap with catch block to prevent build crashes if WordPress backend is offline/unreachable

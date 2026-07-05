@@ -83,7 +83,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     const title = `${cleanTitle} | سحبة فيب`;
     const description = cleanDesc || `تفاصيل ومواصفات ${cleanTitle} - سحبة فيب.`;
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sahbavape.com";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mediumpurple-tarsier-577339.hostingersite.com";
     const canonicalUrl = `${siteUrl}/product/${product.slug}`;
 
     return {
@@ -152,7 +152,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const variations = product.variations?.nodes || [];
 
   // ─── Product Structured Data (JSON-LD Schema) ───
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sahbavape.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mediumpurple-tarsier-577339.hostingersite.com";
   const canonicalUrl = `${siteUrl}/product/${product.slug}`;
   
   const rawLdDesc = (typeof product.shortDescription === 'string' && product.shortDescription) || 

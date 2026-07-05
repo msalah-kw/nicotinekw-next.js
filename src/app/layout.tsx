@@ -14,7 +14,7 @@ const tajawal = Tajawal({
 
 export const metadata: Metadata = {
   // BRANDING_TODO: Update standard apex canonical domain for brand-specific metadata tags.
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://sahbavape.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://mediumpurple-tarsier-577339.hostingersite.com"),
   // BRANDING_TODO: Update default e-commerce store SEO Title and Description tags.
   title: "سحبة فيب – متجر فيب إلكتروني | الكويت",
   description:

@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const cleanDesc = page.content ? truncateText(page.content, 160) : "";
     const description = cleanDesc || `عرض صفحة ${page.title} ومحتوياتها.`;
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sahbavape.com";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mediumpurple-tarsier-577339.hostingersite.com";
     const canonicalUrl = `${siteUrl}/${decodedSlug}`;
 
     return {

@@ -27,7 +27,7 @@ interface ProductImageNode {
 }
 
 export async function GET() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sahbavape.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mediumpurple-tarsier-577339.hostingersite.com";
   let xmlString = "";
 
   try {

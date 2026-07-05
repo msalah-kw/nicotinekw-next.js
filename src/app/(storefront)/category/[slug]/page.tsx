@@ -59,7 +59,7 @@ export async function generateMetadata({
     const title = `${cleanTitle} – سحبة فيب`;
     const description = truncateText(cleanDesc, 160);
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sahbavape.com";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mediumpurple-tarsier-577339.hostingersite.com";
     const canonicalUrl = `${siteUrl}/category/${decodedSlug}`;
 
     return {
@@ -138,7 +138,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     notFound();
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sahbavape.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mediumpurple-tarsier-577339.hostingersite.com";
 
   // BreadcrumbList JSON-LD
   const breadcrumbLd = {
