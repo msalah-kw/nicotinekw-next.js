@@ -69,7 +69,7 @@ export default function Header() {
           <Link href="/" className="site-logo">
             {/* BRANDING_TODO: Replace desktop logo sourceUrl, height, width, and altText */}
             <Image 
-              src="https://lightgrey-flamingo-522119.hostingersite.com/wp-content/uploads/2026/02/sahbavape.webp" 
+              src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/02/sahbavape.webp" 
               alt="سحبة فيب" 
               width={400}
               height={120}
@@ -201,7 +201,7 @@ export default function Header() {
             <Link href="/" className="site-logo">
               {/* BRANDING_TODO: Replace mobile logo sourceUrl, height, width, and altText */}
               <Image 
-                src="https://lightgrey-flamingo-522119.hostingersite.com/wp-content/uploads/2026/02/sahbavape.webp" 
+                src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/02/sahbavape.webp" 
                 alt="سحبة فيب" 
                 width={400}
                 height={120}

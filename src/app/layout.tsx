@@ -24,8 +24,8 @@ export const metadata: Metadata = {
   },
   icons: {
     // BRANDING_TODO: Replace with icon links reflecting the new store's brand logo asset URL.
-    icon: "https://lightgrey-flamingo-522119.hostingersite.com/wp-content/uploads/2026/02/sahbavape-icon.png",
-    apple: "https://lightgrey-flamingo-522119.hostingersite.com/wp-content/uploads/2026/02/sahbavape-icon.png",
+    icon: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/02/sahbavape-icon.png",
+    apple: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/02/sahbavape-icon.png",
   },
 };
 
@@ -34,8 +34,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  preconnect("https://lightgrey-flamingo-522119.hostingersite.com");
-  prefetchDNS("https://lightgrey-flamingo-522119.hostingersite.com");
+  preconnect("https://aliceblue-gnu-460662.hostingersite.com");
+  prefetchDNS("https://aliceblue-gnu-460662.hostingersite.com");
 
   return (
     <html lang="ar" dir="rtl" className={tajawal.variable}>

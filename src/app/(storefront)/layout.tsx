@@ -31,7 +31,7 @@ export default async function StorefrontLayout({
             <Link href="/" className="footer-logo">
               {/* BRANDING_TODO: Replace footer brand logo icon, width, height, and altText */}
               <Image 
-                src="https://lightgrey-flamingo-522119.hostingersite.com/wp-content/uploads/2026/02/sahbavape-icon.png" 
+                src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/02/sahbavape-icon.png" 
                 alt="سحبة فيب" 
                 width={512}
                 height={512}

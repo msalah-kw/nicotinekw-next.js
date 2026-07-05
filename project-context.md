@@ -10,7 +10,7 @@ The project is structured as a modern, decoupled Headless E-commerce application
 
 * **Frontend:** Next.js (App Router) + TypeScript + Vanilla CSS (using custom semantic variables defined in `src/app/globals.css` with a pure HTML/CSS structure, no Tailwind).
 * **Backend:** Headless WordPress (WooCommerce) + WPGraphQL + WooGraphQL.
-* **API Endpoint:** `https://lightgrey-flamingo-522119.hostingersite.com/graphql`
+* **API Endpoint:** `https://aliceblue-gnu-460662.hostingersite.com/graphql`
 
 ---
 

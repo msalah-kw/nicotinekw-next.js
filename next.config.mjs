@@ -7,7 +7,7 @@ const nextConfig = {
       {
         protocol: "https",
         // BRANDING_TODO: Replace hostname with your WooCommerce/WordPress backend media domain.
-        hostname: "lightgrey-flamingo-522119.hostingersite.com",
+        hostname: "aliceblue-gnu-460662.hostingersite.com",
         pathname: "/wp-content/uploads/**",
       },
     ],

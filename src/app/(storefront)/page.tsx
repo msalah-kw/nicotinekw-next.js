@@ -14,32 +14,32 @@ const HOMEPAGE_CATEGORIES = [
   {
     name: "اجهزة فيب",
     slug: "vape",
-    image: "https://lightgrey-flamingo-522119.hostingersite.com/wp-content/uploads/2026/06/اجهزة-فيب.webp",
+    image: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/06/اجهزة-فيب.webp",
   },
   {
     name: "سحبة زقارة",
     slug: "pod-system",
-    image: "https://lightgrey-flamingo-522119.hostingersite.com/wp-content/uploads/2026/06/زقارة.webp",
+    image: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/06/زقارة.webp",
   },
   {
     name: "سحبات جاهزة",
     slug: "disposable",
-    image: "https://lightgrey-flamingo-522119.hostingersite.com/wp-content/uploads/2026/06/سحبات-جاهزة.webp",
+    image: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/06/سحبات-جاهزة.webp",
   },
   {
     name: "نكهات شيشة",
     slug: "freebase-eliquids",
-    image: "https://lightgrey-flamingo-522119.hostingersite.com/wp-content/uploads/2026/06/نكهات-شيشة.webp",
+    image: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/06/نكهات-شيشة.webp",
   },
   {
     name: "نكهات زقارة",
     slug: "saltnic-flavors",
-    image: "https://lightgrey-flamingo-522119.hostingersite.com/wp-content/uploads/2026/06/سولت.webp",
+    image: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/06/سولت.webp",
   },
   {
     name: "ايقوص",
     slug: "iqos",
-    image: "https://lightgrey-flamingo-522119.hostingersite.com/wp-content/uploads/2026/06/ايقوص.webp",
+    image: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/06/ايقوص.webp",
   },
 ];
 
@@ -61,7 +61,7 @@ export default async function HomePage() {
         <div className="container">
           <Link href="/shop" className="banner-link">
             <Image 
-              src="https://lightgrey-flamingo-522119.hostingersite.com/wp-content/uploads/2026/06/بانر.webp" 
+              src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/06/بانر.webp" 
               alt="سحبة فيب - تسوق أفضل السحبات والنكهات في الكويت" 
               className="banner-image"
               width={1366}

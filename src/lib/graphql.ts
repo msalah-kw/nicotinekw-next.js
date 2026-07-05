@@ -1,6 +1,6 @@
 import { cache } from "react";
 
-const GRAPHQL_ENDPOINT = process.env.WORDPRESS_API_URL || "https://lightgrey-flamingo-522119.hostingersite.com/graphql";
+const GRAPHQL_ENDPOINT = process.env.WORDPRESS_API_URL || "https://aliceblue-gnu-460662.hostingersite.com/graphql";
 
 /**
  * Core GraphQL fetch utility

@@ -28,7 +28,7 @@ export default function CheckoutLayout({
           <div className="checkout-header-center">
             <Link href="/">
               <img 
-                src="https://lightgrey-flamingo-522119.hostingersite.com/wp-content/uploads/2026/02/sahbavape.webp" 
+                src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/02/sahbavape.webp" 
                 alt="سحبة فيب" 
                 className="checkout-logo"
               />
