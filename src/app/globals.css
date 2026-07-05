@@ -9,29 +9,38 @@
 :root {
   /* BRANDING_TODO: Customize colors to match the new e-commerce brand identity */
   /* Color Palette */
-  --color-bg: #f8fafc;
+  --color-bg: #FFFFFF;
   --color-bg-elevated: #ffffff;
-  --color-bg-card: #ffffff;
-  --color-bg-card-hover: #ffffff;
-  --color-surface: #f1f5f9;
-  --color-border: rgba(15, 23, 42, 0.08);
-  --color-border-hover: rgba(15, 23, 42, 0.15);
+  --color-bg-card: #F8F9FA;
+  --color-bg-card-hover: #FFFFFF;
+  --color-surface: #F8F9FA;
+  --color-border: rgba(51, 51, 51, 0.08);
+  --color-border-hover: rgba(51, 51, 51, 0.15);
 
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-muted: #94a3b8;
+  --color-text-primary: #333333;
+  --color-text-secondary: #555555;
+  --color-text-muted: #888888;
 
-  /* BRANDING_TODO: Replace accent/logo brand colors with the new identity theme colors */
-  /* Accent – Logo Red */
-  --color-accent: #e61c24;
-  --color-accent-light: #ff3b43;
-  --color-accent-dim: rgba(230, 28, 36, 0.06);
-  --color-accent-glow: rgba(230, 28, 36, 0.12);
+  /* Accent – Logo Orange */
+  --color-accent: #FF8C00;
+  --color-accent-light: #FFA500;
+  --color-accent-dim: rgba(255, 140, 0, 0.06);
+  --color-accent-glow: rgba(255, 140, 0, 0.12);
+
+  /* Secondary & Highlight */
+  --color-secondary: #C19A6B;
+  --color-gold: #C19A6B;
 
   /* Semantic */
   --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-price: #059669;
+  --color-warning: #C0392B;
+  --color-price: #FF8C00;
+
+  /* تعريف متغيرات التدرج اللوني في الجذر */
+  --gradient-primary: linear-gradient(135deg, #FF9800 0%, #E65100 100%);
+  --gradient-primary-hover: linear-gradient(135deg, #FFA726 0%, #F57C00 100%);
+  --shadow-btn: 0 4px 15px rgba(230, 81, 0, 0.25);
+  --shadow-btn-hover: 0 6px 20px rgba(230, 81, 0, 0.4);
 
   /* Layout */
   --container-width: 1600px;
@@ -922,16 +931,37 @@ textarea {
   white-space: nowrap;
 }
 
-.btn-primary {
-  background: var(--color-accent);
-  color: #fff;
-  box-shadow: 0 0 20px rgba(230, 28, 36, 0.3);
+.btn-primary,
+.btn-gradient {
+  background: var(--gradient-primary);
+  color: #FFFFFF;
+  font-family: var(--font-family) !important;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px; /* حواف ناعمة عصرية */
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: var(--shadow-btn);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
 }
 
-.btn-primary:hover {
-  background: var(--color-accent-light);
-  box-shadow: 0 0 30px rgba(230, 28, 36, 0.5);
-  transform: translateY(-1px);
+.btn-primary:hover,
+.btn-gradient:hover {
+  background: var(--gradient-primary-hover);
+  box-shadow: var(--shadow-btn-hover);
+  transform: translateY(-2px); /* حركة خفيفة للأعلى */
+}
+
+.btn-primary:active,
+.btn-gradient:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-btn);
 }
 
 .btn-outline {
@@ -942,7 +972,7 @@ textarea {
 
 .btn-outline:hover {
   border-color: var(--color-accent);
-  color: var(--color-accent-light);
+  color: var(--color-accent);
   background: var(--color-accent-dim);
 }
 
@@ -1201,24 +1231,30 @@ textarea {
   width: 100%;
   padding: 10px var(--space-md);
   font-size: var(--font-size-sm);
-  font-weight: 600;
-  border-radius: var(--radius-md);
-  background: var(--color-accent);
-  color: #fff;
+  font-weight: 700;
+  border-radius: 8px; /* matching new border-radius */
+  background: var(--gradient-primary);
+  color: #FFFFFF;
   border: none;
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition: all 0.3s ease-in-out;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
   margin-top: auto; /* Push to bottom of flex container */
+  box-shadow: var(--shadow-btn);
 }
 
 .product-card-add-to-cart-btn:hover {
-  background: var(--color-accent-light);
-  box-shadow: 0 4px 12px rgba(230, 28, 36, 0.2);
-  transform: translateY(-1px);
+  background: var(--gradient-primary-hover);
+  box-shadow: var(--shadow-btn-hover);
+  transform: translateY(-2px);
+}
+
+.product-card-add-to-cart-btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-btn);
 }
 
 .product-card-add-to-cart-btn:disabled {
@@ -2108,29 +2144,30 @@ textarea {
 .add-to-cart-btn {
   flex-grow: 1;
   height: 56px;
-  background: linear-gradient(135deg, var(--color-accent), #990f14);
+  background: var(--gradient-primary);
   color: #fff;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: 8px; /* matching new border-radius */
   font-size: var(--font-size-md);
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
-  transition: all var(--transition-base);
-  box-shadow: 0 4px 14px rgba(230, 28, 36, 0.4);
+  transition: all 0.3s ease-in-out;
+  box-shadow: var(--shadow-btn);
 }
 
 .add-to-cart-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(230, 28, 36, 0.6);
-  background: linear-gradient(135deg, var(--color-accent-light), var(--color-accent));
+  box-shadow: var(--shadow-btn-hover);
+  background: var(--gradient-primary-hover);
 }
 
 .add-to-cart-btn:active {
   transform: translateY(0);
+  box-shadow: var(--shadow-btn);
 }
 
 .add-to-cart-btn svg {
@@ -3528,13 +3565,13 @@ textarea {
 .cart-toast-btn-primary {
   background: var(--color-accent);
   color: #fff;
-  box-shadow: 0 2px 8px rgba(230, 28, 36, 0.25);
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.25);
 }
 
 .cart-toast-btn-primary:hover {
   background: var(--color-accent-light);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(230, 28, 36, 0.35);
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.35);
 }
 
 .cart-toast-btn-outline {
@@ -4480,9 +4517,9 @@ textarea {
 .review-error-message {
   font-size: var(--font-size-sm);
   font-weight: 500;
-  color: #991b1b; /* Deep red */
-  background: rgba(230, 28, 36, 0.06);
-  border: 1px solid rgba(230, 28, 36, 0.15);
+  color: var(--color-warning);
+  background: rgba(192, 57, 43, 0.06);
+  border: 1px solid rgba(192, 57, 43, 0.15);
   padding: var(--space-md);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-md);
