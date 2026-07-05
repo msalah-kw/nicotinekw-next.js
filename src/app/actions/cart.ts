@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies, headers } from "next/headers";
-import { revalidateTag } from "next/cache";
+import { revalidateTag, revalidatePath } from "next/cache";
 import {
   fetchGraphQL,
   GET_CART_QUERY,
@@ -226,6 +226,7 @@ export async function addToCartAction(
     const updatedCart = await getCartAction(newSessionToken || sessionToken);
     
     revalidateTag("cart", { expire: 0 });
+    revalidatePath('/', 'layout');
     
     return {
       success: true,
@@ -248,6 +249,7 @@ export async function addToCartAction(
         const updatedCart = await getCartAction(newSessionToken || undefined);
         
         revalidateTag("cart", { expire: 0 });
+        revalidatePath('/', 'layout');
         
         return {
           success: true,
@@ -291,6 +293,7 @@ export async function updateCartQuantityAction(
     const updatedCart = await getCartAction(newSessionToken || sessionToken);
     
     revalidateTag("cart", { expire: 0 });
+    revalidatePath('/', 'layout');
     
     return {
       success: true,
@@ -332,6 +335,7 @@ export async function removeFromCartAction(
     const updatedCart = await getCartAction(newSessionToken || sessionToken);
     
     revalidateTag("cart", { expire: 0 });
+    revalidatePath('/', 'layout');
     
     return {
       success: true,
