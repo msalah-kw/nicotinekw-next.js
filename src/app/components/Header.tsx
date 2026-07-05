@@ -6,13 +6,17 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import CartBadge from "@/app/components/CartBadge";
-import { CATEGORIES_CONFIG } from "@/lib/navigation";
+import { CategoryNode } from "@/lib/navigation";
 import { useCart } from "@/context/CartContext";
 
 const DynamicMobileDrawer = dynamic(() => import("./MobileDrawer"), { ssr: false });
 const DynamicMiniCartDrawer = dynamic(() => import("./MiniCartDrawer"), { ssr: false });
 
-export default function Header() {
+interface HeaderProps {
+  categories: CategoryNode[];
+}
+
+export default function Header({ categories }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { cartItemsCount } = useCart();
@@ -84,7 +88,7 @@ export default function Header() {
               الرئيسية
             </Link>
 
-            {CATEGORIES_CONFIG.map((cat) => {
+            {categories.map((cat) => {
               const hasSubs = cat.subcategories && cat.subcategories.length > 0;
               const isActive = pathname.startsWith(cat.url) || 
                 (cat.subcategories?.some(sub => pathname.startsWith(sub.url)));
@@ -238,6 +242,7 @@ export default function Header() {
       {isDrawerOpen && (
         <DynamicMobileDrawer
           isOpen={isDrawerOpen}
+          categories={categories}
           onClose={() => setIsDrawerOpen(false)}
           onOpenCart={() => {
             setIsDrawerOpen(false);

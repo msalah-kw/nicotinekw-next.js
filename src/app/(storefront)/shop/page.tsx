@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   fetchGraphQL,
   GET_ALL_PRODUCTS_QUERY,
   WooProduct,
 } from "@/lib/graphql";
+import { getProductAttributes } from "@/lib/catalog";
 import ProductCard from "@/app/components/ProductCard";
 
 export const metadata: Metadata = {
@@ -16,8 +18,13 @@ export const metadata: Metadata = {
 };
 
 export default async function ShopPage() {
-  const { data } = await fetchGraphQL(GET_ALL_PRODUCTS_QUERY, { first: 100 }, undefined, { revalidate: 60 });
-  const products: WooProduct[] = data?.products?.nodes ?? [];
+  const [productsRes, attributes] = await Promise.all([
+    fetchGraphQL(GET_ALL_PRODUCTS_QUERY, { first: 100 }, undefined, { revalidate: 60 }),
+    getProductAttributes(),
+  ]);
+
+  const products: WooProduct[] = productsRes.data?.products?.nodes ?? [];
+  const activeAttributes = attributes.filter(attr => attr.terms && attr.terms.length > 0);
 
   return (
     <div className="container">
@@ -40,20 +47,45 @@ export default async function ShopPage() {
         </div>
       </div>
 
-      {/* ─── Product Grid ─── */}
+      {/* ─── Shop Layout with Sidebar & Product Grid ─── */}
       <div className="shop-content" id="shop-products">
-        {products.length > 0 ? (
-          <div className="products-grid">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+        <div className="shop-layout">
+          {/* Attributes Sidebar */}
+          {activeAttributes.length > 0 && (
+            <aside className="shop-sidebar" aria-label="فلاتر تصنيف المنتجات">
+              {activeAttributes.map((attr) => (
+                <div key={attr.slug} className="sidebar-widget">
+                  <h3 className="sidebar-widget-title">{attr.label}</h3>
+                  <ul className="sidebar-terms-list">
+                    {attr.terms.map((term) => (
+                      <li key={term.slug} className="sidebar-term-item">
+                        <Link href={`/search?q=${encodeURIComponent(term.name)}`}>
+                          {term.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </aside>
+          )}
+
+          {/* Main Products Grid */}
+          <div style={{ width: "100%" }}>
+            {products.length > 0 ? (
+              <div className="products-grid">
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state">
+                <div className="empty-state-icon">🔍</div>
+                <p>لا توجد منتجات حالياً</p>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="empty-state">
-            <div className="empty-state-icon">🔍</div>
-            <p>لا توجد منتجات حالياً</p>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );

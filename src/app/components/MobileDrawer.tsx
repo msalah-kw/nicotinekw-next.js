@@ -4,15 +4,16 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { CATEGORIES_CONFIG } from "@/lib/navigation";
+import { CategoryNode } from "@/lib/navigation";
 
 interface MobileDrawerProps {
   isOpen: boolean;
+  categories: CategoryNode[];
   onClose: () => void;
   onOpenCart: () => void;
 }
 
-export default function MobileDrawer({ isOpen, onClose, onOpenCart }: MobileDrawerProps) {
+export default function MobileDrawer({ isOpen, categories, onClose, onOpenCart }: MobileDrawerProps) {
   const pathname = usePathname();
   const [expandedDropdowns, setExpandedDropdowns] = useState<Record<string, boolean>>({});
   const [isTransitionActive, setIsTransitionActive] = useState(false);
@@ -70,7 +71,7 @@ export default function MobileDrawer({ isOpen, onClose, onOpenCart }: MobileDraw
 
           <div className="drawer-divider">الأقسام</div>
 
-          {CATEGORIES_CONFIG.map((cat) => {
+          {categories.map((cat) => {
             const hasSubs = cat.subcategories && cat.subcategories.length > 0;
             const isExpanded = !!expandedDropdowns[cat.slug];
             const isActive = pathname.startsWith(cat.url) || 

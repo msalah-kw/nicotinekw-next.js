@@ -3,16 +3,19 @@ import Image from "next/image";
 import Header from "@/app/components/Header";
 import CartToast from "@/app/components/CartToast";
 import MobileBottomNav from "@/app/components/MobileBottomNav";
+import { getNavigationCategories } from "@/lib/catalog";
 
 export default async function StorefrontLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const categories = await getNavigationCategories();
+
   return (
     <div className="page-wrapper">
       {/* ─── Header ─── */}
-      <Header />
+      <Header categories={categories} />
 
       {/* ─── Cart Toast Popup ─── */}
       <CartToast />

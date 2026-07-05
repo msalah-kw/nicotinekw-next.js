@@ -12,6 +12,7 @@ export async function fetchGraphQL(
   options?: {
     revalidate?: number | false;
     cache?: RequestCache;
+    tags?: string[];
   }
 ) {
   const headers: Record<string, string> = {
@@ -31,8 +32,11 @@ export async function fetchGraphQL(
     }),
   };
 
-  if (options?.revalidate !== undefined) {
-    fetchOptions.next = { revalidate: options.revalidate };
+  if (options?.revalidate !== undefined || options?.tags !== undefined) {
+    fetchOptions.next = {
+      ...(options.revalidate !== undefined ? { revalidate: options.revalidate } : {}),
+      ...(options.tags !== undefined ? { tags: options.tags } : {}),
+    };
   } else if (options?.cache) {
     fetchOptions.cache = options.cache;
   } else {
@@ -92,6 +96,7 @@ export const fetchGraphQLCached = cache(
     options?: {
       revalidate?: number | false;
       cache?: RequestCache;
+      tags?: string[];
     }
   ) => {
     return fetchGraphQL(query, variables, sessionToken, options);

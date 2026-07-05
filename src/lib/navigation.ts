@@ -6,7 +6,7 @@ export interface CategoryNode {
   subcategories?: CategoryNode[];
 }
 
-export const CATEGORIES_CONFIG: CategoryNode[] = [
+export const FALLBACK_CATEGORIES: CategoryNode[] = [
   {
     name: "فيب",
     slug: "vape",
