@@ -30,6 +30,18 @@ const ICON_MAP: Record<string, string> = {
   hookah: "🫧",
 };
 
+const CATEGORY_SORT_ORDER = [
+  "اجهزة",
+  "نكه",      // Catches both 'نكهات' and 'نكهة'
+  "بود",      // Catches 'بودات'
+  "كويل",     // Catches 'كويلات'
+  "تانك",     // Catches 'تانكات'
+  "شيشة",     // Catches 'شيشة ومعسل'
+  "زقاير",    // Catches 'زقاير وتبغ'
+  "اكياس",    // Catches 'اكياس نيكوتين'
+  "اكسسوارات",
+];
+
 /**
  * Translate/Replace database content to conform with strict terminology requirements
  */
@@ -126,6 +138,15 @@ export async function getNavigationCategories(): Promise<CategoryNode[]> {
         delete item.subcategories;
       }
     }
+
+    // Sort the top-level categories based on priority order
+    tree.sort((a, b) => {
+      const indexA = CATEGORY_SORT_ORDER.findIndex((keyword) => a.name.includes(keyword));
+      const indexB = CATEGORY_SORT_ORDER.findIndex((keyword) => b.name.includes(keyword));
+      const rankA = indexA === -1 ? 999 : indexA;
+      const rankB = indexB === -1 ? 999 : indexB;
+      return rankA - rankB;
+    });
 
     return tree;
   } catch (error) {
