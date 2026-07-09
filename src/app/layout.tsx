@@ -23,8 +23,8 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   icons: {
-    icon: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2025/05/cropped-nicotine-logo-200.webp",
-    apple: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2025/05/cropped-nicotine-logo-200.webp",
+    icon: "/nicotine-logo.webp",
+    apple: "/nicotine-logo.webp",
   },
 };
 

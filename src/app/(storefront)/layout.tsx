@@ -33,7 +33,7 @@ export default async function StorefrontLayout({
           <div className="footer-col footer-brand-col">
             <Link href="/" className="footer-logo">
               <Image 
-                src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2025/03/nicotine-logo-white.webp" 
+                src="/nicotine-white-logo.webp" 
                 alt="Nicotine Kuwait Logo" 
                 width={240}
                 height={80}

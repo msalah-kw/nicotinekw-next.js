@@ -29,7 +29,7 @@ export default function CheckoutLayout({
           <div className="checkout-header-center">
             <Link href="/">
               <Image 
-                src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2025/05/cropped-nicotine-logo-200.webp" 
+                src="/nicotine-logo.webp" 
                 alt="Nicotine Kuwait Logo" 
                 width={160}
                 height={48}

@@ -72,7 +72,7 @@ export default function Header({ categories }: HeaderProps) {
           {/* Right: Store Logo */}
           <Link href="/" className="site-logo">
             <Image 
-              src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2025/05/cropped-nicotine-logo-200.webp" 
+              src="/nicotine-logo.webp" 
               alt="Nicotine Kuwait Logo" 
               width={240}
               height={80}
@@ -202,7 +202,7 @@ export default function Header({ categories }: HeaderProps) {
           <div className="center-col">
             <Link href="/" className="site-logo">
               <Image 
-                src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2025/05/cropped-nicotine-logo-200.webp" 
+                src="/nicotine-logo.webp" 
                 alt="Nicotine Kuwait Logo" 
                 width={240}
                 height={80}
