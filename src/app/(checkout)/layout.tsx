@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -27,10 +28,13 @@ export default function CheckoutLayout({
           {/* Center: Logo */}
           <div className="checkout-header-center">
             <Link href="/">
-              <img 
-                src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/02/sahbavape.webp" 
-                alt="سحبة فيب" 
+              <Image 
+                src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2025/05/cropped-nicotine-logo-200.webp" 
+                alt="Nicotine Kuwait Logo" 
+                width={160}
+                height={48}
                 className="checkout-logo"
+                priority
               />
             </Link>
           </div>

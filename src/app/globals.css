@@ -1659,9 +1659,9 @@ textarea {
    ═══════════════════════════════════════════════════════ */
 .site-footer {
   margin-top: auto;
-  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-  color: #334155;
-  border-top: 1px solid #e2e8f0;
+  background: var(--gradient-primary);
+  color: #FFFFFF;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
   padding: var(--space-3xl) 0 0;
   font-size: var(--font-size-sm);
 }
@@ -1684,9 +1684,9 @@ textarea {
 }
 
 .footer-logo img {
-  height: 96px;
+  height: 48px;
   width: auto;
-  max-width: 200px;
+  max-width: 160px;
   object-fit: contain;
   display: block;
 }
@@ -1694,11 +1694,11 @@ textarea {
 .footer-desc {
   line-height: 1.6;
   font-size: 0.875rem;
-  color: #475569;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .footer-col h3 {
-  color: var(--color-text-primary);
+  color: #FFFFFF;
   font-size: 1.05rem;
   font-weight: 700;
   position: relative;
@@ -1712,7 +1712,7 @@ textarea {
   right: 0;
   width: 35px;
   height: 2px;
-  background: var(--color-accent);
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .footer-col ul {
@@ -1726,14 +1726,15 @@ textarea {
 
 .footer-col a,
 .footer-col li {
-  color: #334155;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 0.95rem;
   transition: color var(--transition-fast), padding-right var(--transition-fast);
   display: inline-block;
 }
 
 .footer-col a:hover {
-  color: var(--color-accent);
+  color: #FFFFFF;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
   padding-right: 4px;
 }
 
@@ -1742,13 +1743,13 @@ textarea {
 }
 
 .footer-bottom {
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
   padding: var(--space-lg) 0;
   text-align: center;
 }
 
 .footer-bottom p {
-  color: var(--color-text-secondary);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 0.8rem;
   margin: 0;
 }

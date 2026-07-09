@@ -23,9 +23,8 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   icons: {
-    // BRANDING_TODO: Replace with icon links reflecting the new store's brand logo asset URL.
-    icon: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/02/sahbavape-icon.png",
-    apple: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/02/sahbavape-icon.png",
+    icon: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2025/05/cropped-nicotine-logo-200.webp",
+    apple: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2025/05/cropped-nicotine-logo-200.webp",
   },
 };
 

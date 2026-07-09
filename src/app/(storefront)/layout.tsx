@@ -32,13 +32,11 @@ export default async function StorefrontLayout({
           {/* Column 1: Brand Info */}
           <div className="footer-col footer-brand-col">
             <Link href="/" className="footer-logo">
-              {/* BRANDING_TODO: Replace footer brand logo icon, width, height, and altText */}
               <Image 
-                src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/02/sahbavape-icon.png" 
-                alt="سحبة فيب" 
-                width={512}
-                height={512}
-                unoptimized
+                src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2025/03/nicotine-logo-white.webp" 
+                alt="Nicotine Kuwait Logo" 
+                width={160}
+                height={48}
               />
             </Link>
             {/* BRANDING_TODO: Customize brand description paragraph */}

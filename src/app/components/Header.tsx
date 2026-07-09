@@ -71,14 +71,12 @@ export default function Header({ categories }: HeaderProps) {
         <div className="desktop-header container desktop-only">
           {/* Right: Store Logo */}
           <Link href="/" className="site-logo">
-            {/* BRANDING_TODO: Replace desktop logo sourceUrl, height, width, and altText */}
             <Image 
-              src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/02/sahbavape.webp" 
-              alt="سحبة فيب" 
-              width={400}
-              height={120}
+              src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2025/05/cropped-nicotine-logo-200.webp" 
+              alt="Nicotine Kuwait Logo" 
+              width={160}
+              height={48}
               priority
-              unoptimized
             />
           </Link>
 
@@ -203,14 +201,12 @@ export default function Header({ categories }: HeaderProps) {
 
           <div className="center-col">
             <Link href="/" className="site-logo">
-              {/* BRANDING_TODO: Replace mobile logo sourceUrl, height, width, and altText */}
               <Image 
-                src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/02/sahbavape.webp" 
-                alt="سحبة فيب" 
-                width={400}
-                height={120}
+                src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2025/05/cropped-nicotine-logo-200.webp" 
+                alt="Nicotine Kuwait Logo" 
+                width={160}
+                height={48}
                 priority
-                unoptimized
               />
             </Link>
           </div>
