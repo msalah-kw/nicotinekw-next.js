@@ -224,15 +224,17 @@ textarea {
 }
 
 .site-logo img {
-  height: 52px; /* Large, prominent size on desktop */
+  height: 64px; /* Prominent size on desktop, fits within 72px header */
   width: auto;
+  max-height: 80px;
+  max-width: 240px;
   object-fit: contain;
   display: block;
   transition: height var(--transition-base);
 }
 
 .main-header.scrolled .site-logo img {
-  height: 42px;
+  height: 48px; /* Shrinks slightly when header is sticky scrolled to 60px */
 }
 
 .site-logo:hover {
@@ -757,7 +759,9 @@ textarea {
   }
 
   .mobile-header .site-logo img {
-    height: 36px; /* Optimized size for mobile */
+    height: 44px; /* Prominent mobile header logo, fits within 56px header */
+    max-height: 48px;
+    max-width: 240px;
   }
 }
 
@@ -1684,22 +1688,23 @@ textarea {
 }
 
 .footer-logo img {
-  height: 48px;
+  height: 80px;
   width: auto;
-  max-width: 160px;
+  max-width: 240px;
   object-fit: contain;
   display: block;
 }
 
 .footer-desc {
-  line-height: 1.6;
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.8;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
 }
 
 .footer-col h3 {
   color: #FFFFFF;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 700;
   position: relative;
   padding-bottom: var(--space-xs);
@@ -1712,7 +1717,7 @@ textarea {
   right: 0;
   width: 35px;
   height: 2px;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .footer-col ul {
@@ -1724,17 +1729,26 @@ textarea {
   list-style: none;
 }
 
-.footer-col a,
 .footer-col li {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 0.95rem;
+  font-size: 16px;
+  line-height: 1.8;
+  display: inline-block;
+}
+
+.footer-col a {
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.8;
   transition: color var(--transition-fast), padding-right var(--transition-fast);
   display: inline-block;
+  text-decoration: none;
 }
 
 .footer-col a:hover {
   color: #FFFFFF;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
   padding-right: 4px;
 }
 
@@ -1749,8 +1763,8 @@ textarea {
 }
 
 .footer-bottom p {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 14px;
   margin: 0;
 }
 

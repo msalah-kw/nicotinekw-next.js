@@ -35,8 +35,8 @@ export default async function StorefrontLayout({
               <Image 
                 src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2025/03/nicotine-logo-white.webp" 
                 alt="Nicotine Kuwait Logo" 
-                width={160}
-                height={48}
+                width={240}
+                height={80}
               />
             </Link>
             {/* BRANDING_TODO: Customize brand description paragraph */}
