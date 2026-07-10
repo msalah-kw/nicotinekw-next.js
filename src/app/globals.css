@@ -46,6 +46,15 @@
   --container-width: 1600px;
   --header-height: 80px;
 
+  /* ─── Logo Brand Integrity: Clear Space System ─── */
+  --logo-width: 180px;
+  --logo-width-scrolled: 140px;
+  --logo-clear-space: calc(var(--logo-width) / 4);
+  --logo-clear-space-scrolled: calc(var(--logo-width-scrolled) / 4);
+  --logo-nav-secure-margin: 100px;
+  --header-padding-y: 16px;
+  --header-padding-x: 5%;
+
   /* Spacing Scale */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
@@ -194,6 +203,8 @@ textarea {
   border-bottom: 1px solid var(--color-border);
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-base);
+  /* Brand-integrity header padding: 16px vertical, 5% horizontal minimum */
+  padding: var(--header-padding-y) var(--header-padding-x);
 }
 
 /* Scrolled state for Header */
@@ -216,13 +227,26 @@ textarea {
   height: 64px;
 }
 
-/* Prominent Store Logo */
+/* ─── Logo Wrapper: Clear Space (Brand Integrity) ─── */
+/*
+ * Clear Space = 25% of the logo's rendered width.
+ * Internal padding protects the logo from container edges.
+ * External margin-left (RTL context) secures 100px between
+ * the logo wrapper and the nearest navigation element.
+ */
 .site-logo {
   display: flex;
   align-items: center;
-  transition: transform var(--transition-fast);
-  width: 180px;
+  transition: transform var(--transition-fast),
+              width var(--transition-base),
+              padding var(--transition-base),
+              margin var(--transition-base);
+  width: var(--logo-width);
   flex-shrink: 0;
+  /* Internal clear space: protects logo from its own container borders */
+  padding: var(--logo-clear-space);
+  /* External secure margin: guarantees 100px distance to the nav */
+  margin-left: var(--logo-nav-secure-margin);
 }
 
 .site-logo img {
@@ -232,8 +256,11 @@ textarea {
   display: block;
 }
 
+/* Scrolled state: shrink logo and recalculate clear space */
 .main-header.scrolled .site-logo {
-  width: 140px;
+  width: var(--logo-width-scrolled);
+  padding: var(--logo-clear-space-scrolled);
+  margin-left: calc(var(--logo-nav-secure-margin) * 0.6);
 }
 
 .site-logo:hover {
@@ -726,6 +753,15 @@ textarea {
   }
 
   /* Mobile 3-column layout keeping logo centered without stretching */
+  /* ─── Mobile: Scale logo brand variables ─── */
+  :root {
+    --logo-width: 130px;
+    --logo-width-scrolled: 110px;
+    --logo-nav-secure-margin: 0px;
+    --header-padding-y: 10px;
+    --header-padding-x: var(--space-md);
+  }
+
   .mobile-header {
     display: flex;
     align-items: center;
@@ -758,7 +794,10 @@ textarea {
   }
 
   .mobile-header .site-logo {
-    width: 130px;
+    width: var(--logo-width);
+    /* Center-column logo: equal clear space, no directional secure margin */
+    margin-left: 0;
+    padding: calc(var(--logo-clear-space) / 2);
   }
 }
 
@@ -1872,6 +1911,13 @@ textarea {
 
   .categories-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* ─── Tablet: Scale logo brand variables ─── */
+  :root {
+    --logo-width: 160px;
+    --logo-width-scrolled: 120px;
+    --logo-nav-secure-margin: 40px;
   }
 
   .nav-links {
