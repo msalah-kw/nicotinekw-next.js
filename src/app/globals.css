@@ -906,7 +906,7 @@ textarea {
   color: #FF8C00;
   line-height: 1.2;
   margin-bottom: var(--space-sm);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  text-shadow: none !important;
 }
 
 .hero-overlay__subtitle {
@@ -914,13 +914,14 @@ textarea {
   font-weight: 500;
   color: #6B7280;
   line-height: 1.4;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: none !important;
 }
 
 /* ─── Mobile Breakpoint ─── */
 @media (max-width: 768px) {
   .hero-banner-v2 {
-    height: 250px;
+    height: auto;
+    aspect-ratio: 1 / 1;
   }
 
   /* Swap images */
