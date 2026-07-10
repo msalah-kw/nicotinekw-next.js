@@ -8,6 +8,7 @@ import {
   WooCategory,
 } from "@/lib/graphql";
 import ProductCard from "@/app/components/ProductCard";
+import HeroBanner from "@/app/components/HeroBanner";
 
 /* ─── Homepage Categories Config ─── */
 const HOMEPAGE_CATEGORIES = [
@@ -57,22 +58,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ═══ Hero Banner Section ═══ */}
-      <section className="hero-banner" id="hero-banner">
-        <div className="container">
-          <Link href="/shop" className="banner-link">
-            <Image 
-              src="https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/06/بانر.webp" 
-              alt="سحبة فيب - تسوق أفضل السحبات والنكهات في الكويت" 
-              className="banner-image"
-              width={1366}
-              height={526}
-              priority
-              unoptimized
-              sizes="(max-width: 768px) 100vw, 1200px"
-            />
-          </Link>
-        </div>
-      </section>
+      <HeroBanner />
  
       {/* ═══ Featured Categories ═══ */}
       <section className="section" id="categories">

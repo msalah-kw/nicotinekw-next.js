@@ -4,7 +4,6 @@ import { preconnect, prefetchDNS } from "react-dom";
 import { CartProvider } from "@/context/CartContext";
 import "./globals.css";
 
-// BRANDING_TODO: Configure/Replace primary typography and font family for the storefront.
 const tajawal = Tajawal({
   subsets: ["arabic"],
   weight: ["400", "500", "700"],
