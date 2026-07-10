@@ -865,10 +865,8 @@ textarea {
 .hero-banner-v2 {
   position: relative;
   width: 100%;
-  height: auto;
+  height: 400px;
   overflow: hidden;
-  /* Wide cinematic ratio — closely matches the desktop source image */
-  aspect-ratio: 21 / 9;
 }
 
 /* Image wrappers — fill the banner container */
@@ -877,6 +875,11 @@ textarea {
   inset: 0;
   width: 100%;
   height: 100%;
+}
+
+.hero-img img {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 /* Desktop image shown by default, mobile hidden */
@@ -917,8 +920,7 @@ textarea {
 /* ─── Mobile Breakpoint ─── */
 @media (max-width: 768px) {
   .hero-banner-v2 {
-    /* Portrait-friendly ratio — shows more of the mobile image */
-    aspect-ratio: 4 / 5;
+    height: 250px;
   }
 
   /* Swap images */
