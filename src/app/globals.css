@@ -4817,7 +4817,7 @@ textarea {
 /* ─── Homepage Categories Grid ─── */
 .home-categories-grid {
   display: grid;
-  gap: var(--space-md); /* ≈ 1rem */
+  gap: 1.5rem; /* Equivalent to gap-6 */
   padding: var(--space-xl) 0;
   /* Desktop: 3 columns */
   grid-template-columns: repeat(3, 1fr);
@@ -4829,18 +4829,18 @@ textarea {
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
+  background: #ffffff; /* Pure white */
+  border-radius: 16px; /* rounded-2xl equivalent */
+  padding: var(--space-md) var(--space-lg); /* Reduced vertical padding */
   text-decoration: none;
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
-  border: 1px solid var(--color-border);
+  border: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); /* Soft shadow */
+  transition: transform 300ms ease-in-out, box-shadow 300ms ease-in-out;
 }
 
 .home-category-card:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-accent-dim);
+  transform: translateY(-6px); /* hover:-translate-y-1.5 */
+  box-shadow: 0 8px 30px rgba(255, 140, 0, 0.12); /* Pronounced shadow with brand orange */
 }
 
 .home-category-icon {
@@ -4859,20 +4859,25 @@ textarea {
 .home-category-title {
   font-size: var(--font-size-md);
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: #1f2937; /* Dark slate/gray */
   margin: 0;
+  transition: color 300ms ease-in-out;
+}
+
+.home-category-card:hover .home-category-title {
+  color: var(--color-accent);
 }
 
 @media (max-width: 768px) {
   .home-categories-grid {
     /* Mobile: 2 columns */
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-sm);
+    gap: 1rem;
     padding: var(--space-md) 0;
   }
   
   .home-category-card {
-    padding: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
   }
   
   .home-category-icon {
@@ -4885,4 +4890,5 @@ textarea {
     font-size: var(--font-size-sm);
   }
 }
+
 
