@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
-   VapeCart – Global Design System
+   nicotinekw – Global Design System
    Pure CSS • RTL-first • 1600px Container
    ═══════════════════════════════════════════════════════ */
 
@@ -47,8 +47,8 @@
   --header-height: 80px;
 
   /* ─── Logo Brand Integrity: Clear Space System ─── */
-  --logo-width: 180px;
-  --logo-width-scrolled: 140px;
+  --logo-width: 200px;
+  --logo-width-scrolled: 170px;
   --logo-clear-space: calc(var(--logo-width) / 4);
   --logo-clear-space-scrolled: calc(var(--logo-width-scrolled) / 4);
   --logo-nav-secure-margin: 100px;
@@ -243,8 +243,8 @@ textarea {
               margin var(--transition-base);
   width: var(--logo-width);
   flex-shrink: 0;
-  /* Internal clear space: protects logo from its own container borders */
-  padding: var(--logo-clear-space);
+  /* Clear space: horizontal-only (header already provides vertical padding) */
+  padding: 0 var(--logo-clear-space);
   /* External secure margin: guarantees 100px distance to the nav */
   margin-left: var(--logo-nav-secure-margin);
 }
@@ -259,7 +259,7 @@ textarea {
 /* Scrolled state: shrink logo and recalculate clear space */
 .main-header.scrolled .site-logo {
   width: var(--logo-width-scrolled);
-  padding: var(--logo-clear-space-scrolled);
+  padding: 0 var(--logo-clear-space-scrolled);
   margin-left: calc(var(--logo-nav-secure-margin) * 0.6);
 }
 
@@ -755,8 +755,8 @@ textarea {
   /* Mobile 3-column layout keeping logo centered without stretching */
   /* ─── Mobile: Scale logo brand variables ─── */
   :root {
-    --logo-width: 130px;
-    --logo-width-scrolled: 110px;
+    --logo-width: 170px;
+    --logo-width-scrolled: 150px;
     --logo-nav-secure-margin: 0px;
     --header-padding-y: 10px;
     --header-padding-x: var(--space-md);
@@ -795,9 +795,16 @@ textarea {
 
   .mobile-header .site-logo {
     width: var(--logo-width);
-    /* Center-column logo: equal clear space, no directional secure margin */
+    /* Center-column logo: horizontal clear space only, no directional margin */
     margin-left: 0;
-    padding: calc(var(--logo-clear-space) / 2);
+    padding: 0 calc(var(--logo-clear-space) / 2);
+  }
+
+  /* Guarantee mobile logo image fills its wrapper without being crushed */
+  .mobile-header .site-logo img {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
   }
 }
 
@@ -4712,4 +4719,4 @@ textarea {
   transform-origin: center;
   /* Adds a static, vibrant red glow so it's always visible */
   filter: drop-shadow(0 0 6px rgba(255, 71, 87, 0.7)); 
-}
+}
