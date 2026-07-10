@@ -19,7 +19,7 @@ export default function HeroBanner() {
           fill
           priority
           sizes="100vw"
-          style={{ objectFit: "cover" }}
+          style={{ objectFit: "cover", objectPosition: "left center" }}
           unoptimized
         />
       </div>
@@ -32,7 +32,7 @@ export default function HeroBanner() {
           fill
           priority
           sizes="100vw"
-          style={{ objectFit: "cover" }}
+          style={{ objectFit: "cover", objectPosition: "top center" }}
           unoptimized
         />
       </div>
