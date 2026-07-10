@@ -15,32 +15,38 @@ const HOMEPAGE_CATEGORIES = [
   {
     name: "اجهزة فيب",
     slug: "vape",
-    image: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/06/اجهزة-فيب.webp",
+    url: "https://mediumpurple-tarsier-577339.hostingersite.com/category/vape",
+    image: "/categories-icons/vape-devices.webp",
   },
   {
-    name: "سحبة زقارة",
+    name: "سحبات زقارة",
     slug: "pod-system",
-    image: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/06/زقارة.webp",
+    url: "https://mediumpurple-tarsier-577339.hostingersite.com/category/pod-system",
+    image: "/categories-icons/pod-systems.webp",
   },
   {
     name: "سحبات جاهزة",
     slug: "disposable",
-    image: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/06/سحبات-جاهزة.webp",
+    url: "https://mediumpurple-tarsier-577339.hostingersite.com/category/disposable",
+    image: "/categories-icons/disposable-vape.webp",
   },
   {
     name: "نكهات شيشة",
     slug: "freebase-eliquids",
-    image: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/06/نكهات-شيشة.webp",
+    url: "https://mediumpurple-tarsier-577339.hostingersite.com/category/freebase",
+    image: "/categories-icons/freebase-eliquids.webp",
   },
   {
-    name: "نكهات زقارة",
+    name: "نكهات سولت",
     slug: "saltnic-flavors",
-    image: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/06/سولت.webp",
+    url: "https://mediumpurple-tarsier-577339.hostingersite.com/category/saltnic",
+    image: "/categories-icons/saltnic-eliquids.webp",
   },
   {
     name: "ايقوص",
     slug: "iqos",
-    image: "https://aliceblue-gnu-460662.hostingersite.com/wp-content/uploads/2026/06/ايقوص.webp",
+    url: "https://mediumpurple-tarsier-577339.hostingersite.com/category/%D8%A7%D8%AC%D9%87%D8%B2%D8%A9-%D8%A7%D9%84%D8%AA%D8%B3%D8%AE%D9%8A%D9%86",
+    image: "/categories-icons/iqos.webp",
   },
 ];
 
@@ -63,41 +69,27 @@ export default async function HomePage() {
       {/* ═══ Featured Categories ═══ */}
       <section className="section" id="categories">
         <div className="container">
-          <div className="section-header">
-            <h2 className="section-title">تسوّق حسب القسم</h2>
-            <Link href="/shop" className="section-link">
-              جميع الأقسام
-            </Link>
-          </div>
-
-          <div className="categories-grid">
-            {HOMEPAGE_CATEGORIES.map((cat) => {
-              const wooCat = allCategories.find((c) => c.slug === cat.slug);
-              const count = wooCat ? wooCat.count : 0;
-              return (
-                <Link
-                  href={`/category/${cat.slug}`}
-                  key={cat.slug}
-                  className="category-card"
-                  id={`category-${cat.slug}`}
-                >
-                  <div className="category-icon">
-                    <Image
-                      src={cat.image}
-                      alt={cat.name}
-                      width={120}
-                      height={120}
-                      unoptimized
-                      className="category-icon-image"
-                    />
-                  </div>
-                  <h3>{cat.name}</h3>
-                  <span className="category-count">
-                    {count} منتج
-                  </span>
-                </Link>
-              );
-            })}
+          <div className="home-categories-grid">
+            {HOMEPAGE_CATEGORIES.map((cat) => (
+              <Link
+                href={cat.url}
+                key={cat.slug}
+                className="home-category-card"
+                id={`category-${cat.slug}`}
+              >
+                <div className="home-category-icon">
+                  <Image
+                    src={cat.image}
+                    alt={cat.name}
+                    width={80}
+                    height={80}
+                    unoptimized
+                    className="home-category-image"
+                  />
+                </div>
+                <h3 className="home-category-title">{cat.name}</h3>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
