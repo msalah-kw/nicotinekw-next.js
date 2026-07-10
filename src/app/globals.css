@@ -762,6 +762,12 @@ textarea {
     --header-padding-x: var(--space-md);
   }
 
+  /* Mobile: header scrolls with content instead of staying pinned */
+  .main-header {
+    position: relative;
+    top: auto;
+  }
+
   .mobile-header {
     display: flex;
     align-items: center;

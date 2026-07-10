@@ -13,14 +13,27 @@ const tajawal = Tajawal({
 });
 
 export const metadata: Metadata = {
-  // BRANDING_TODO: Update standard apex canonical domain for brand-specific metadata tags.
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://mediumpurple-tarsier-577339.hostingersite.com"),
-  // BRANDING_TODO: Update default e-commerce store SEO Title and Description tags.
-  title: "سحبة فيب – متجر فيب إلكتروني | الكويت",
+  title: {
+    template: "%s | متجر نيكوتين الكويت",
+    default: "متجر نيكوتين الكويت",
+  },
   description:
-    "أفضل متجر فيب إلكتروني في الكويت. سحبات جاهزة، بودات، نكهات سولت ونكهات فيب بأسعار منافسة وتوصيل سريع.",
+    "نيكوتين هو مصدرك الموثوق لمنتجات الفيب بالكويت، الحين تقدر تشتري جميع أغراض الفيب من مكان واحد بأرخص الاسعار وبتوصيل مجاني داخل الكويت",
   alternates: {
     canonical: "/",
+  },
+  openGraph: {
+    siteName: "متجر نيكوتين الكويت",
+    locale: "ar_KW",
+    type: "website",
+    description:
+      "نيكوتين هو مصدرك الموثوق لمنتجات الفيب بالكويت، الحين تقدر تشتري جميع أغراض الفيب من مكان واحد بأرخص الاسعار وبتوصيل مجاني داخل الكويت",
+  },
+  twitter: {
+    card: "summary_large_image",
+    description:
+      "نيكوتين هو مصدرك الموثوق لمنتجات الفيب بالكويت، الحين تقدر تشتري جميع أغراض الفيب من مكان واحد بأرخص الاسعار وبتوصيل مجاني داخل الكويت",
   },
   icons: {
     icon: "/nicotine-logo.webp",
