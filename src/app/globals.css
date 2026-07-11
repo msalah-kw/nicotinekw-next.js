@@ -861,90 +861,72 @@ textarea {
   }
 }
 
-/* ─── Hero Banner V2 (Responsive Desktop/Mobile) ─── */
-.hero-banner-v2 {
-  position: relative;
-  width: 100%;
-  height: 400px;
+/* ─── Hero Animated Banner V3 (CSS-only Animated Gradient Mesh) ─── */
+.hero-animated-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   overflow: hidden;
-}
-
-/* Image wrappers — fill the banner container */
-.hero-img {
-  position: absolute;
-  inset: 0;
+  height: 400px;
   width: 100%;
-  height: 100%;
-}
-
-.hero-img img {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-/* Desktop image shown by default, mobile hidden */
-.hero-img--desktop { display: block; }
-.hero-img--mobile  { display: none;  }
-
-/* ─── Text Overlay (Desktop default: center-right, RTL-aware) ─── */
-.hero-overlay {
-  position: absolute;
-  z-index: 2;
-  direction: rtl;
-  text-align: right;
-  /* Vertically centered, offset from the right edge */
-  top: 50%;
-  right: 5%;
-  transform: translateY(-50%);
-  max-width: 500px;
+  background: linear-gradient(270deg, #fff3e0, #ffffff, #f3f4f6, #fff8e1);
+  background-size: 200% 200%;
+  animation: gradientPan 10s ease infinite;
   padding: var(--space-lg);
+  position: relative;
 }
 
-.hero-overlay__title {
-  font-size: clamp(1.75rem, 4vw, 3.25rem);
-  font-weight: 700;
+@keyframes gradientPan {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.hero-animated-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
   color: #FF8C00;
   line-height: 1.2;
   margin-bottom: var(--space-sm);
+  opacity: 0;
+  animation: fadeSlideUp 0.8s ease forwards;
   text-shadow: none !important;
 }
 
-.hero-overlay__subtitle {
-  font-size: clamp(1rem, 2vw, 1.5rem);
+.hero-animated-subtitle {
+  font-size: clamp(1rem, 3vw, 1.5rem);
   font-weight: 500;
-  color: #6B7280;
+  color: #4b5563;
   line-height: 1.4;
+  opacity: 0;
+  animation: fadeSlideUp 0.8s ease forwards;
+  animation-delay: 0.2s;
   text-shadow: none !important;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ─── Mobile Breakpoint ─── */
 @media (max-width: 768px) {
-  .hero-banner-v2 {
-    height: auto;
-    aspect-ratio: 1 / 1;
-  }
-
-  /* Swap images */
-  .hero-img--desktop { display: none;  }
-  .hero-img--mobile  { display: block; }
-
-  /* Text overlay: top-center */
-  .hero-overlay {
-    top: 8%;
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: none;
-    text-align: center;
-  }
-
-  .hero-overlay__title {
-    font-size: clamp(1.5rem, 6vw, 2.25rem);
-  }
-
-  .hero-overlay__subtitle {
-    font-size: clamp(0.875rem, 3.5vw, 1.125rem);
+  .hero-animated-banner {
+    height: 250px;
   }
 }
 
