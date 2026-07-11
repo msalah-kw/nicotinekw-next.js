@@ -9,6 +9,7 @@ import {
 } from "@/lib/graphql";
 import ProductCard from "@/app/components/ProductCard";
 import HeroBanner from "@/app/components/HeroBanner";
+import ShishtiProducts from "@/app/components/ShishtiProducts";
 
 /* ─── Homepage Categories Config ─── */
 const HOMEPAGE_CATEGORIES = [
@@ -93,6 +94,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ═══ My Shishti Products Section ═══ */}
+      <ShishtiProducts />
 
       {/* ═══ Latest Products ═══ */}
       <section className="section" id="latest-products">

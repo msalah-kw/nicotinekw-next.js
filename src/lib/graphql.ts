@@ -155,6 +155,42 @@ export const GET_ALL_PRODUCTS_QUERY = `
   }
 `;
 
+export const GET_PRODUCTS_BY_SLUGS_QUERY = `
+  query GetProductsBySlugs($slugs: [String]) {
+    products(where: { slugIn: $slugs }, first: 100) {
+      nodes {
+        id
+        slug
+        databaseId
+        name
+        image {
+          sourceUrl
+          altText
+        }
+        __typename
+        ... on SimpleProduct {
+          price
+          regularPrice
+          salePrice
+          stockStatus
+        }
+        ... on VariableProduct {
+          price
+          regularPrice
+          salePrice
+          stockStatus
+        }
+        productCategories {
+          nodes {
+            name
+            slug
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const GET_LATEST_PRODUCTS_QUERY = `
   query GetLatestProducts($first: Int = 12) {
     products(first: $first, where: { orderby: { field: DATE, order: DESC } }) {

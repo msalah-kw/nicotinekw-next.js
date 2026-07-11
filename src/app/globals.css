@@ -1239,6 +1239,35 @@ textarea {
 }
 
 /* ═══════════════════════════════════════════════════════
+   SHISHTI PRODUCTS SECTION
+   ═══════════════════════════════════════════════════════ */
+.shishti-title {
+  text-align: center;
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin-bottom: var(--space-xl);
+  color: var(--color-text-primary);
+}
+
+.shishti-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: var(--space-md) 0;
+}
+
+@media (max-width: 768px) {
+  .shishti-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .shishti-title {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-lg);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
    PAGINATION CONTROLS
    ═══════════════════════════════════════════════════════ */
 .pagination {
