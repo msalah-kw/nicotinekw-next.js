@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useTransition } from "react";
-import { useCart } from "@/context/CartContext";
+import { useCart, OptimisticProductMeta } from "@/context/CartContext";
 import { useVariation } from "./VariationProvider";
 
 interface AttributeNode {
@@ -39,6 +39,10 @@ interface VariationNode {
 
 interface AddToCartFormProps {
   productId: number;
+  productName: string;
+  productImage: string | null;
+  productPrice: string | null;
+  productSlug: string;
   attributes: AttributeNode[] | null;
   variations: VariationNode[] | null;
   stockStatus?: string | null;
@@ -71,7 +75,7 @@ function cleanAttributeLabel(val: string): string {
   return clean;
 }
 
-export default function AddToCartForm({ productId, attributes, variations, stockStatus }: AddToCartFormProps) {
+export default function AddToCartForm({ productId, productName, productImage, productPrice, productSlug, attributes, variations, stockStatus }: AddToCartFormProps) {
   const { addToCart } = useCart();
   const { setSelectedVariationImage } = useVariation();
   const [quantity, setQuantity] = useState(1);
@@ -138,7 +142,14 @@ export default function AddToCartForm({ productId, attributes, variations, stock
     const variationId = matchingVariation ? matchingVariation.databaseId : undefined;
     
     startTransition(async () => {
-      const isAdded = await addToCart(productId, quantity, variationId);
+      // Build optimistic metadata from the product page props
+      const meta: OptimisticProductMeta = {
+        name: productName,
+        image: productImage,
+        price: productPrice,
+        slug: productSlug,
+      };
+      const isAdded = await addToCart(productId, quantity, variationId, meta);
 
       if (isAdded) {
         setSuccess(true);

@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { WooProduct, fetchGraphQL, GET_PRODUCT_BY_SLUG_QUERY } from "@/lib/graphql";
 import { cleanPrice } from "@/lib/formatters";
-import { useCart } from "@/context/CartContext";
+import { useCart, OptimisticProductMeta } from "@/context/CartContext";
 
 interface ProductCardProps {
   product: WooProduct;
@@ -120,7 +120,13 @@ export default function ProductCard({ product }: ProductCardProps) {
       // Simple Product
       startTransition(async () => {
         try {
-          await addToCart(product.databaseId, 1);
+          const meta: OptimisticProductMeta = {
+            name: cleanName,
+            image: product.image?.sourceUrl || null,
+            price: price || null,
+            slug: product.slug,
+          };
+          await addToCart(product.databaseId, 1, undefined, meta);
         } catch (error) {
           console.error("Error adding simple product to cart:", error);
         }
@@ -172,7 +178,13 @@ export default function ProductCard({ product }: ProductCardProps) {
     const variationId = matchingVariation ? matchingVariation.databaseId : undefined;
     startTransition(async () => {
       try {
-        const success = await addToCart(product.databaseId, quantity, variationId);
+        const meta: OptimisticProductMeta = {
+          name: cleanName,
+          image: product.image?.sourceUrl || null,
+          price: displayPrice || null,
+          slug: product.slug,
+        };
+        const success = await addToCart(product.databaseId, quantity, variationId, meta);
         if (success) {
           setShowModal(false);
           // Reset selections

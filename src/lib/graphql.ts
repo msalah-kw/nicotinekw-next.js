@@ -607,6 +607,60 @@ export const GET_CART_QUERY = `
   }
 `;
 
+// Shared cart fragment used by all cart mutations to return full cart state in a single round-trip
+const CART_FRAGMENT = `
+  fragment FullCart on Cart {
+    contents(first: 100) {
+      nodes {
+        key
+        quantity
+        subtotal
+        total
+        product {
+          node {
+            id
+            databaseId
+            slug
+            name
+            image {
+              sourceUrl
+              altText
+            }
+            ... on SimpleProduct {
+              price
+              regularPrice
+            }
+            ... on VariableProduct {
+              price
+              regularPrice
+            }
+          }
+        }
+        variation {
+          node {
+            id
+            databaseId
+            name
+            price
+            regularPrice
+            image {
+              sourceUrl
+              altText
+            }
+          }
+          attributes {
+            name
+            label
+            value
+          }
+        }
+      }
+    }
+    subtotal
+    total
+  }
+`;
+
 export const ADD_TO_CART_MUTATION = `
   mutation AddToCart($productId: Int!, $quantity: Int!, $variationId: Int) {
     addToCart(input: { productId: $productId, quantity: $quantity, variationId: $variationId }) {
@@ -614,28 +668,34 @@ export const ADD_TO_CART_MUTATION = `
         key
         quantity
       }
+      cart {
+        ...FullCart
+      }
     }
   }
+  ${CART_FRAGMENT}
 `;
 
 export const UPDATE_CART_QUANTITY_MUTATION = `
   mutation UpdateCartQuantity($key: ID!, $quantity: Int!) {
     updateItemQuantities(input: { items: [{ key: $key, quantity: $quantity }] }) {
       cart {
-        total
+        ...FullCart
       }
     }
   }
+  ${CART_FRAGMENT}
 `;
 
 export const REMOVE_FROM_CART_MUTATION = `
   mutation RemoveFromCart($keys: [ID]!) {
     removeItemsFromCart(input: { keys: $keys }) {
       cart {
-        total
+        ...FullCart
       }
     }
   }
+  ${CART_FRAGMENT}
 `;
 
 export const CHECKOUT_MUTATION = `

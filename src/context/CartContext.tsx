@@ -62,11 +62,23 @@ export interface CartData {
   total: string;
 }
 
+/**
+ * Product metadata passed from UI components to enable instant optimistic updates.
+ * Both ProductCard and AddToCartForm already have this data available.
+ */
+export interface OptimisticProductMeta {
+  name: string;
+  image: string | null;
+  price: string | null;
+  slug: string;
+}
+
 interface CartContextType {
   cart: CartData | null;
   loading: boolean;
+  mutating: boolean;
   cartItemsCount: number;
-  addToCart: (productId: number, quantity: number, variationId?: number) => Promise<boolean>;
+  addToCart: (productId: number, quantity: number, variationId?: number, meta?: OptimisticProductMeta) => Promise<boolean>;
   updateQuantity: (key: string, quantity: number) => Promise<boolean>;
   removeItem: (key: string) => Promise<boolean>;
   refreshCart: () => Promise<void>;
@@ -83,6 +95,7 @@ const LOCAL_STORAGE_KEY = "vapecart_woocommerce_session";
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [mutating, setMutating] = useState<boolean>(false);
   const [sessionToken, setSessionToken] = useState<string | undefined>(undefined);
   const [showCartToast, setShowCartToast] = useState(false);
   const [toastItem, setToastItem] = useState<ToastItem | null>(null);
@@ -147,63 +160,176 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }, 3000);
   }, []);
 
-  const addToCart = async (productId: number, quantity: number, variationId?: number) => {
-    setLoading(true);
+  const addToCart = async (productId: number, quantity: number, variationId?: number, meta?: OptimisticProductMeta) => {
+    // ─── OPTIMISTIC UPDATE: Instantly update the UI ───
+    const prevCart = cart; // Snapshot for rollback on failure
+
+    if (meta) {
+      // Show toast immediately with the product metadata
+      showToast({
+        name: meta.name,
+        image: meta.image,
+        price: meta.price,
+        quantity,
+      });
+
+      // Build a synthetic CartItem for instant display
+      const optimisticKey = `optimistic-${productId}-${variationId || 'simple'}-${Date.now()}`;
+      const syntheticItem: CartItem = {
+        key: optimisticKey,
+        quantity,
+        subtotal: meta.price || "0",
+        total: meta.price || "0",
+        product: {
+          node: {
+            id: `temp-${productId}`,
+            databaseId: productId,
+            slug: meta.slug,
+            name: meta.name,
+            image: meta.image ? { sourceUrl: meta.image, altText: meta.name } : null,
+            price: meta.price,
+            regularPrice: meta.price,
+          },
+        },
+        variation: null,
+      };
+
+      setCart((prev) => {
+        if (!prev) {
+          // First item in an empty cart
+          return {
+            contents: { nodes: [syntheticItem] },
+            subtotal: meta.price || "0",
+            total: meta.price || "0",
+          };
+        }
+
+        // Check if the same product (and variation) is already in the cart
+        const existingIndex = prev.contents.nodes.findIndex(
+          (n) =>
+            n.product?.node?.databaseId === productId &&
+            (variationId ? n.variation?.node?.databaseId === variationId : !n.variation)
+        );
+
+        let updatedNodes: CartItem[];
+        if (existingIndex >= 0) {
+          // Increment quantity on existing item
+          updatedNodes = prev.contents.nodes.map((item, i) =>
+            i === existingIndex
+              ? { ...item, quantity: item.quantity + quantity }
+              : item
+          );
+        } else {
+          // Add new item
+          updatedNodes = [...prev.contents.nodes, syntheticItem];
+        }
+
+        return {
+          ...prev,
+          contents: { nodes: updatedNodes },
+        };
+      });
+    }
+
+    // ─── BACKGROUND: Fire the server action and reconcile ───
+    setMutating(true);
     const res = await addToCartAction(productId, quantity, variationId, sessionToken);
     handleSessionToken(res.sessionToken, res.clearSession);
-    
+
     if (res.success && res.cart) {
+      // Reconcile with the real server state
       setCart(res.cart);
 
-      // Find the just-added item from the updated cart to build the toast
-      const addedNode = res.cart.contents.nodes.find(
-        (n: CartItem) => n.product?.node?.databaseId === productId
-      );
-      if (addedNode && addedNode.product?.node) {
-        const p = addedNode.product.node;
-        showToast({
-          name: p.name,
-          image: p.image?.sourceUrl || null,
-          price: p.price,
-          quantity,
-        });
+      // If no meta was provided (rare fallback), show toast from server data
+      if (!meta) {
+        const addedNode = res.cart.contents.nodes.find(
+          (n: CartItem) => n.product?.node?.databaseId === productId
+        );
+        if (addedNode && addedNode.product?.node) {
+          const p = addedNode.product.node;
+          showToast({
+            name: p.name,
+            image: p.image?.sourceUrl || null,
+            price: p.price,
+            quantity,
+          });
+        }
       }
 
-      setLoading(false);
+      setMutating(false);
       return true;
     }
-    
-    setLoading(false);
+
+    // ─── ROLLBACK on failure ───
+    if (meta && prevCart !== undefined) {
+      setCart(prevCart);
+    }
+
+    setMutating(false);
     return false;
   };
 
   const updateQuantity = async (key: string, quantity: number) => {
-    setLoading(true);
+    // ─── OPTIMISTIC UPDATE ───
+    const prevCart = cart;
+
+    setCart((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        contents: {
+          nodes: prev.contents.nodes.map((item) =>
+            item.key === key ? { ...item, quantity } : item
+          ),
+        },
+      };
+    });
+
+    // ─── BACKGROUND SERVER ACTION ───
+    setMutating(true);
     const res = await updateCartQuantityAction(key, quantity, sessionToken);
     handleSessionToken(res.sessionToken, res.clearSession);
     
     if (res.success && res.cart) {
       setCart(res.cart);
-      setLoading(false);
+      setMutating(false);
       return true;
     }
     
-    setLoading(false);
+    // Rollback
+    setCart(prevCart);
+    setMutating(false);
     return false;
   };
 
   const removeItem = async (key: string) => {
-    setLoading(true);
+    // ─── OPTIMISTIC UPDATE ───
+    const prevCart = cart;
+
+    setCart((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        contents: {
+          nodes: prev.contents.nodes.filter((item) => item.key !== key),
+        },
+      };
+    });
+
+    // ─── BACKGROUND SERVER ACTION ───
+    setMutating(true);
     const res = await removeFromCartAction([key], sessionToken);
     handleSessionToken(res.sessionToken, res.clearSession);
     
     if (res.success && res.cart) {
       setCart(res.cart);
-      setLoading(false);
+      setMutating(false);
       return true;
     }
     
-    setLoading(false);
+    // Rollback
+    setCart(prevCart);
+    setMutating(false);
     return false;
   };
 
@@ -221,6 +347,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       value={{
         cart,
         loading,
+        mutating,
         cartItemsCount,
         addToCart,
         updateQuantity,

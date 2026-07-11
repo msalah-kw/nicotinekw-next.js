@@ -336,6 +336,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
           {/* Add to Cart client form (pills selector & qty) */}
           <AddToCartForm
             productId={product.databaseId}
+            productName={name}
+            productImage={product.image?.sourceUrl || null}
+            productPrice={price || null}
+            productSlug={product.slug}
             attributes={attributes}
             variations={variations}
             stockStatus={rawStock}

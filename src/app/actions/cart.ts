@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies, headers } from "next/headers";
-import { revalidateTag, revalidatePath } from "next/cache";
+import { updateTag } from "next/cache";
 import {
   fetchGraphQL,
   GET_CART_QUERY,
@@ -165,7 +165,7 @@ export async function getCartAction(sessionToken?: string) {
       GET_CART_QUERY,
       {},
       sessionToken,
-      { cache: "no-store", tags: ["cart"] }
+      { cache: "no-store" }
     );
     return {
       success: true,
@@ -181,7 +181,7 @@ export async function getCartAction(sessionToken?: string) {
           GET_CART_QUERY,
           {},
           undefined,
-          { cache: "no-store", tags: ["cart"] }
+          { cache: "no-store" }
         );
         return {
           success: true,
@@ -221,18 +221,15 @@ export async function addToCartAction(
       { productId, quantity, variationId },
       sessionToken
     );
-    
-    // After adding to cart, let's fetch the updated cart automatically
-    const updatedCart = await getCartAction(newSessionToken || sessionToken);
-    
-    revalidateTag("cart", { expire: 0 });
-    revalidatePath('/', 'layout');
-    
+
+    // Cart data is now returned inline from the mutation — no second fetch needed
+    updateTag("cart");
+
     return {
       success: true,
       cartItem: data?.addToCart?.cartItem || null,
-      cart: updatedCart.cart,
-      sessionToken: newSessionToken || updatedCart.sessionToken || sessionToken || null,
+      cart: data?.addToCart?.cart || null,
+      sessionToken: newSessionToken || sessionToken || null,
     };
   } catch (error: any) {
     if (error.message === "TOKEN_EXPIRED") {
@@ -244,18 +241,14 @@ export async function addToCartAction(
           { productId, quantity, variationId },
           undefined
         );
-        
-        // Fetch cart using the new guest token
-        const updatedCart = await getCartAction(newSessionToken || undefined);
-        
-        revalidateTag("cart", { expire: 0 });
-        revalidatePath('/', 'layout');
-        
+
+        updateTag("cart");
+
         return {
           success: true,
           cartItem: data?.addToCart?.cartItem || null,
-          cart: updatedCart.cart,
-          sessionToken: newSessionToken || updatedCart.sessionToken || null,
+          cart: data?.addToCart?.cart || null,
+          sessionToken: newSessionToken || null,
           clearSession: true,
         };
       } catch (retryError: any) {
@@ -289,16 +282,14 @@ export async function updateCartQuantityAction(
       { key, quantity },
       sessionToken
     );
-    
-    const updatedCart = await getCartAction(newSessionToken || sessionToken);
-    
-    revalidateTag("cart", { expire: 0 });
-    revalidatePath('/', 'layout');
-    
+
+    // Cart data returned inline from mutation
+    updateTag("cart");
+
     return {
       success: true,
-      cart: updatedCart.cart,
-      sessionToken: newSessionToken || updatedCart.sessionToken || sessionToken || null,
+      cart: data?.updateItemQuantities?.cart || null,
+      sessionToken: newSessionToken || sessionToken || null,
     };
   } catch (error: any) {
     if (error.message === "TOKEN_EXPIRED") {
@@ -331,16 +322,14 @@ export async function removeFromCartAction(
       { keys },
       sessionToken
     );
-    
-    const updatedCart = await getCartAction(newSessionToken || sessionToken);
-    
-    revalidateTag("cart", { expire: 0 });
-    revalidatePath('/', 'layout');
-    
+
+    // Cart data returned inline from mutation
+    updateTag("cart");
+
     return {
       success: true,
-      cart: updatedCart.cart,
-      sessionToken: newSessionToken || updatedCart.sessionToken || sessionToken || null,
+      cart: data?.removeItemsFromCart?.cart || null,
+      sessionToken: newSessionToken || sessionToken || null,
     };
   } catch (error: any) {
     if (error.message === "TOKEN_EXPIRED") {
@@ -424,7 +413,7 @@ export async function checkoutAction(
       sessionToken
     );
 
-    revalidateTag("cart", { expire: 0 });
+    updateTag("cart");
 
     return {
       success: true,
@@ -436,7 +425,7 @@ export async function checkoutAction(
     if (error.message === "TOKEN_EXPIRED") {
       console.warn("checkoutAction: Token expired. Clearing session...");
       await clearSessionCookies();
-      revalidateTag("cart", { expire: 0 });
+      updateTag("cart");
       return {
         success: false,
         error: "expired_session",
