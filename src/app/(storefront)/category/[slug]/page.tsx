@@ -9,8 +9,12 @@ import {
 import { truncateText } from "@/lib/formatters";
 import ProductCard from "@/app/components/ProductCard";
 
+const PRODUCTS_PER_PAGE = 20;
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mediumpurple-tarsier-577339.hostingersite.com";
+
 interface CategoryPageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 // Translate/Replace database content to conform with strict terminology requirements
@@ -31,9 +35,16 @@ function sanitizeTerminology(text: string): string {
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
+  const resolvedSearch = await searchParams;
   const decodedSlug = decodeURIComponent(slug);
+
+  const after = typeof resolvedSearch.after === "string" ? resolvedSearch.after : undefined;
+  const before = typeof resolvedSearch.before === "string" ? resolvedSearch.before : undefined;
+  const pageNum = typeof resolvedSearch.page === "string" ? parseInt(resolvedSearch.page, 10) : 1;
+  const isFirstPage = !after && !before;
 
   try {
     const { data } = await fetchGraphQL(GET_PRODUCTS_BY_CATEGORY_QUERY, {
@@ -56,22 +67,29 @@ export async function generateMetadata({
       ? sanitizeTerminology(category.description)
       : `تصفح منتجات قسم ${cleanTitle} في متجر سحبة فيب بأفضل الأسعار وتوصيل سريع في الكويت.`;
 
-    const title = `${cleanTitle} – سحبة فيب`;
+    const pageLabel = !isFirstPage && pageNum > 1 ? ` - صفحة ${pageNum}` : "";
+    const title = `${cleanTitle}${pageLabel} – سحبة فيب`;
     const description = truncateText(cleanDesc, 160);
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mediumpurple-tarsier-577339.hostingersite.com";
-    const canonicalUrl = `${siteUrl}/category/${decodedSlug}`;
+    // Canonical: page 1 → clean URL, page 2+ → paginated URL
+    const canonical = isFirstPage
+      ? `${siteUrl}/category/${decodedSlug}`
+      : `${siteUrl}/category/${decodedSlug}?after=${after || ""}&page=${pageNum}`;
 
     return {
       title,
       description,
       alternates: {
-        canonical: canonicalUrl,
+        canonical,
+      },
+      robots: {
+        index: true,
+        follow: true,
       },
       openGraph: {
         title,
         description,
-        url: canonicalUrl,
+        url: canonical,
         siteName: "سحبة فيب",
         locale: "ar_KW",
         images: [],
@@ -91,10 +109,15 @@ export async function generateMetadata({
   }
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const resolvedParams = await params;
+  const resolvedSearch = await searchParams;
   const { slug } = resolvedParams;
   const decodedSlug = decodeURIComponent(slug);
+
+  const after = typeof resolvedSearch.after === "string" ? resolvedSearch.after : undefined;
+  const before = typeof resolvedSearch.before === "string" ? resolvedSearch.before : undefined;
+  const pageNum = typeof resolvedSearch.page === "string" ? parseInt(resolvedSearch.page, 10) : 1;
 
   let products: WooProduct[] = [];
   let categoryName = "";
@@ -103,12 +126,28 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   let isFound = false;
   let hasError = false;
 
+  // Pagination state
+  let hasNextPage = false;
+  let hasPreviousPage = false;
+  let endCursor: string | null = null;
+  let startCursor: string | null = null;
+
   try {
-    const { data } = await fetchGraphQL(GET_PRODUCTS_BY_CATEGORY_QUERY, {
+    // Build GraphQL variables for cursor pagination
+    const variables: Record<string, unknown> = {
       categorySlugId: decodedSlug,
       categorySlugStr: decodedSlug,
-      first: 100,
-    }, undefined, { revalidate: 60 });
+    };
+    if (before) {
+      variables.last = PRODUCTS_PER_PAGE;
+      variables.before = before;
+      variables.first = null;
+    } else {
+      variables.first = PRODUCTS_PER_PAGE;
+      if (after) variables.after = after;
+    }
+
+    const { data } = await fetchGraphQL(GET_PRODUCTS_BY_CATEGORY_QUERY, variables, undefined, { revalidate: 60 });
 
     if (data?.productCategory) {
       isFound = true;
@@ -118,6 +157,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       );
       productCount = data.productCategory.count || 0;
       products = data.products?.nodes ?? [];
+
+      const pageInfo = data.products?.pageInfo;
+      hasNextPage = pageInfo?.hasNextPage ?? false;
+      hasPreviousPage = pageInfo?.hasPreviousPage ?? false;
+      endCursor = pageInfo?.endCursor ?? null;
+      startCursor = pageInfo?.startCursor ?? null;
     }
   } catch (error) {
     console.error("[CategoryPage] ✖ Error fetching category products:", error);
@@ -138,7 +183,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     notFound();
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mediumpurple-tarsier-577339.hostingersite.com";
+  const basePath = `/category/${decodedSlug}`;
 
   // BreadcrumbList JSON-LD
   const breadcrumbLd = {
@@ -161,7 +206,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         "@type": "ListItem",
         "position": 3,
         "name": categoryName,
-        "item": `${siteUrl}/category/${decodedSlug}`
+        "item": `${siteUrl}${basePath}`
       }
     ]
   };
@@ -212,6 +257,41 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             <div className="empty-state-icon">🔍</div>
             <p>لا توجد منتجات حالياً في هذا القسم</p>
           </div>
+        )}
+
+        {/* ─── Pagination Controls ─── */}
+        {(hasPreviousPage || hasNextPage) && (
+          <nav className="pagination" aria-label="التنقل بين الصفحات">
+            {hasPreviousPage && startCursor ? (
+              <Link
+                href={pageNum <= 2 ? basePath : `${basePath}?before=${startCursor}&page=${pageNum - 1}`}
+                className="pagination-btn pagination-btn-prev"
+              >
+                ← السابق
+              </Link>
+            ) : (
+              <span className="pagination-btn pagination-btn-prev pagination-btn-disabled">
+                ← السابق
+              </span>
+            )}
+
+            <span className="pagination-current">
+              صفحة {pageNum}
+            </span>
+
+            {hasNextPage && endCursor ? (
+              <Link
+                href={`${basePath}?after=${endCursor}&page=${pageNum + 1}`}
+                className="pagination-btn pagination-btn-next"
+              >
+                التالي →
+              </Link>
+            ) : (
+              <span className="pagination-btn pagination-btn-next pagination-btn-disabled">
+                التالي →
+              </span>
+            )}
+          </nav>
         )}
       </div>
     </div>

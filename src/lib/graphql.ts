@@ -108,8 +108,20 @@ export const fetchGraphQLCached = cache(
 /* ─────────────── Product Queries ─────────────── */
 
 export const GET_ALL_PRODUCTS_QUERY = `
-  query GetAllProducts($first: Int = 100) {
-    products(first: $first) {
+  query GetAllProducts($first: Int = 20, $after: String, $before: String, $last: Int) {
+    products(
+      first: $first,
+      after: $after,
+      before: $before,
+      last: $last,
+      where: { orderby: { field: DATE, order: DESC } }
+    ) {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        endCursor
+        startCursor
+      }
       nodes {
         id
         slug
@@ -293,9 +305,24 @@ export const GET_PRODUCTS_BY_CATEGORY_QUERY = `
   query GetProductsByCategory(
     $categorySlugId: ID!
     $categorySlugStr: String!
-    $first: Int = 100
+    $first: Int = 20
+    $after: String
+    $before: String
+    $last: Int
   ) {
-    products(where: { category: $categorySlugStr }, first: $first) {
+    products(
+      where: { category: $categorySlugStr, orderby: { field: DATE, order: DESC } },
+      first: $first,
+      after: $after,
+      before: $before,
+      last: $last
+    ) {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        endCursor
+        startCursor
+      }
       nodes {
         id
         slug

@@ -1239,6 +1239,89 @@ textarea {
 }
 
 /* ═══════════════════════════════════════════════════════
+   PAGINATION CONTROLS
+   ═══════════════════════════════════════════════════════ */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-2xl);
+  padding: var(--space-lg) 0;
+  direction: rtl;
+}
+
+.pagination-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-base);
+  min-width: 120px;
+  text-align: center;
+}
+
+.pagination-btn:hover:not(.pagination-btn-disabled) {
+  background: var(--color-accent);
+  color: #ffffff;
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-btn);
+  transform: translateY(-2px);
+}
+
+.pagination-btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.pagination-btn-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.pagination-current {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-accent);
+  padding: 0.5rem 1rem;
+  background: var(--color-accent-dim);
+  border-radius: var(--radius-sm);
+  min-width: 80px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .pagination {
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  .pagination-btn {
+    padding: 0.625rem 1rem;
+    font-size: var(--font-size-sm);
+    min-width: 100px;
+  }
+
+  .pagination-current {
+    font-size: var(--font-size-xs);
+    order: -1;
+    width: 100%;
+    text-align: center;
+    margin-bottom: var(--space-xs);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
    PRODUCT CARD
    ═══════════════════════════════════════════════════════ */
 .product-card {
